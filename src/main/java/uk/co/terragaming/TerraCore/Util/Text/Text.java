@@ -6,45 +6,49 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import uk.co.terragaming.TerraCore.Util.Collections.Collections;
-import uk.co.terragaming.TerraCore.Util.Language.Lang;
+import org.spongepowered.api.effect.particle.ParticleType.Material;
 
-import com.google.inject.Inject;
+import uk.co.terragaming.TerraCore.Util.Collections.Collections;
 
 
 public class Text {
 	
-	@Inject Lang lang;
+	private Text(){}
 	
-	protected final int PAGEHEIGHT_PLAYER = 9;
-	protected final int PAGEHEIGHT_CONSOLE = 50;
+	protected static final int PAGEHEIGHT_PLAYER = 9;
+	protected static final int PAGEHEIGHT_CONSOLE = 50;
 	
-	protected final Map<String, String> chatParseReplacements = new HashMap<String, String>();
-	protected final Map<String, String> consoleParseReplacements = new HashMap<String, String>();
+	protected static final Map<String, String> chatParseReplacements = new HashMap<String, String>();
+	protected static final Map<String, String> consoleParseReplacements = new HashMap<String, String>();
 	
-	protected final Pattern chatPattern;
-	protected final Pattern consolePattern;
+	protected static final Pattern chatPattern;
+	protected static final Pattern consolePattern;
 	
-	public final long millisPerSecond = 1000;
-	public final long millisPerMinute = 60 * millisPerSecond;
-	public final long millisPerHour = 60 * millisPerMinute;
-	public final long millisPerDay = 24 * millisPerHour;
-	public final long millisPerWeek = 7 * millisPerDay;
-	public final long millisPerMonth = 31 * millisPerDay;
-	public final long millisPerYear = 365 * millisPerDay;
+	public static final long millisPerSecond = 1000;
+	public static final long millisPerMinute = 60 * millisPerSecond;
+	public static final long millisPerHour = 60 * millisPerMinute;
+	public static final long millisPerDay = 24 * millisPerHour;
+	public static final long millisPerWeek = 7 * millisPerDay;
+	public static final long millisPerMonth = 31 * millisPerDay;
+	public static final long millisPerYear = 365 * millisPerDay;
 	
-	public final Map<String, Long> unitMillis = Collections.map("years", millisPerYear, "months", millisPerMonth, "weeks", millisPerWeek, "days", millisPerDay, "hours", millisPerHour, "minutes", millisPerMinute, "seconds", millisPerSecond);
+	public static final Map<String, Long> unitMillis = Collections.map("years", millisPerYear, "months", millisPerMonth, "weeks", millisPerWeek, "days", millisPerDay, "hours", millisPerHour, "minutes", millisPerMinute, "seconds", millisPerSecond);
 	
-	public final Set<String> vowel = new LinkedHashSet<String>(Arrays.asList("A", "E", "I", "O", "U", "Y", "Å", "Ä", "Ö", "Æ", "Ø", "a", "e", "i", "o", "u", "y", "å", "ä", "ö", "æ", "ø"));
+	public static final Set<String> vowel = new LinkedHashSet<String>(Arrays.asList("A", "E", "I", "O", "U", "Y", "Ã…", "Ã„", "Ã–", "Ã†", "Ã˜", "a", "e", "i", "o", "u", "y", "Ã¥", "Ã¤", "Ã¶", "Ã¦", "Ã¸"));
 	
-	public Text(){
+	protected static void addParseReplacement(String key, String chat, String console){
+		chatParseReplacements.put(key, chat);
+		consoleParseReplacements.put(key, console);
+	}
+	
+	static {
+		
 		addParseReplacement("<empty>",	"",						"");
 		addParseReplacement("<black>",	ChatColor.BLACK,		ConsoleColor.BLACK);
 		addParseReplacement("<navy>",	ChatColor.DARK_BLUE,	ConsoleColor.GREEN);
@@ -89,7 +93,7 @@ public class Text {
 		
 		for (int i = 48; i <= 122; i++) {
 			char c = (char) i;
-			chatParseReplacements.put("§" + c, "\u00A7" + c);
+			chatParseReplacements.put("Â§" + c, "\u00A7" + c);
 			chatParseReplacements.put("&" + c, "\u00A7" + c);
 			if (i == 57) {
 				i = 96;
@@ -122,14 +126,9 @@ public class Text {
 		consolePattern = Pattern.compile(consolePatternString);
 	}
 	
-	protected void addParseReplacement(String key, String chat, String console){
-		chatParseReplacements.put(key, chat);
-		consoleParseReplacements.put(key, console);
-	}
-	
 	// Parse
 	
-	public String stripColor(String string){
+	public static String stripColor(String string){
 		StringBuffer ret = new StringBuffer();
 		Matcher matcher = chatPattern.matcher(string);
 		
@@ -141,7 +140,7 @@ public class Text {
 		return ret.toString();
 	}
 	
-	public String of(boolean console, String string){
+	public static String of(boolean console, String string){
 		StringBuffer ret = new StringBuffer();
 		Matcher matcher = console ? consolePattern.matcher(string) : chatPattern.matcher(string);
 		
@@ -152,11 +151,11 @@ public class Text {
 		return ret.toString();
 	}
 	
-	public String of(String string){
+	public static String of(String string){
 		return of(false, string);
 	}
 	
-	public String of(boolean console, String string, Object... args){
+	public static String of(boolean console, String string, Object... args){
 		Object[] formattedArgs = new Object[args.length];
 		for(int i = 0; i < args.length; i ++){
 			Object arg = args[i];
@@ -169,11 +168,11 @@ public class Text {
 		return String.format(of(console, string), formattedArgs); 
 	}
 	
-	public String of(String string, Object... args){
+	public static String of(String string, Object... args){
 		return of(false, string, args);
 	}
 	
-	public ArrayList<String> of(boolean console, Collection<String> strings){
+	public static ArrayList<String> of(boolean console, Collection<String> strings){
 		ArrayList<String> ret = new ArrayList<String>(strings.size());
 		strings.forEach((string)->{
 			ret.add(of(console, string));
@@ -181,17 +180,17 @@ public class Text {
 		return ret;
 	}
 	
-	public ArrayList<String> of(Collection<String> strings){
+	public static ArrayList<String> of(Collection<String> strings){
 		return of(false, strings);
 	}
 	
 	// Wrap
 	
-	public ArrayList<String> wrap(final String string){
+	public static ArrayList<String> wrap(final String string){
 		return new ArrayList<String>(Arrays.asList(string.split("\\r?\\n")));
 	}
 	
-	public ArrayList<String> wrap(final Collection<String> strings){
+	public static ArrayList<String> wrap(final Collection<String> strings){
 		ArrayList<String> ret = new ArrayList<String>();
 		strings.forEach((string)->{
 			ret.addAll(wrap(string));
@@ -201,25 +200,25 @@ public class Text {
 	
 	// Parse and Wrap
 	
-	public ArrayList<String> ofWrap(boolean console, final String string){
+	public static ArrayList<String> ofWrap(boolean console, final String string){
 		return wrap(of(console, string));
 	}
 	
-	public ArrayList<String> ofWrap(final String string){
+	public static ArrayList<String> ofWrap(final String string){
 		return ofWrap(false, string);
 	}
 	
-	public ArrayList<String> ofWrap(boolean console, final Collection<String> strings){
+	public static ArrayList<String> ofWrap(boolean console, final Collection<String> strings){
 		return wrap(of(console, strings));
 	}
 	
-	public ArrayList<String> ofWrap(final Collection<String> strings){
+	public static ArrayList<String> ofWrap(final Collection<String> strings){
 		return ofWrap(false, strings);
 	}
 	
 	// Cases
 	
-	public String upperCaseFirst(String string){
+	public static String upperCaseFirst(String string){
 		if (string == null) return null;
 		if (string.length() == 0) return string;
 		return string.substring(0,1).toUpperCase() + string.substring(1);
@@ -227,7 +226,7 @@ public class Text {
 	
 	// Repeat
 	
-	public String repeat(String string, int times){
+	public static String repeat(String string, int times){
 		StringBuilder ret = new StringBuilder(times);
 		
 		for (int i = 0; i < times; i++){
@@ -239,7 +238,7 @@ public class Text {
 	
 	// Implode
 	
-	public String implode(final Object[] list, final String glue, final String format) {
+	public static String implode(final Object[] list, final String glue, final String format) {
 		StringBuilder ret = new StringBuilder();
 		
 		for (int i = 0; i < list.length; i++) {
@@ -259,19 +258,19 @@ public class Text {
 		return ret.toString();
 	}
 	
-	public String implode(final Object[] list, final String glue) {
+	public static String implode(final Object[] list, final String glue) {
 		return implode(list, glue, null);
 	}
 	
-	public String implode(final Collection<? extends Object> coll, final String glue, String format) {
+	public static String implode(final Collection<? extends Object> coll, final String glue, String format) {
 		return implode(coll.toArray(new Object[0]), glue, format);
 	}
 	
-	public String implode(final Collection<? extends Object> coll, final String glue) {
+	public static String implode(final Collection<? extends Object> coll, final String glue) {
 		return implode(coll, glue, null);
 	}
 	
-	public String implodeCommaAndDot(final Collection<? extends Object> objects, final String format, final String comma, final String and, final String dot) {
+	public static String implodeCommaAndDot(final Collection<? extends Object> objects, final String format, final String comma, final String and, final String dot) {
 		if (objects.size() == 0)
 			return "";
 		if (objects.size() == 1)
@@ -292,45 +291,45 @@ public class Text {
 		return implode(ourObjects, comma, format) + dot;
 	}
 	
-	public String implodeCommaAndDot(final Collection<? extends Object> objects, final String comma, final String and, final String dot) {
+	public static String implodeCommaAndDot(final Collection<? extends Object> objects, final String comma, final String and, final String dot) {
 		return implodeCommaAndDot(objects, null, comma, and, dot);
 	}
 	
-	public String implodeCommaAnd(final Collection<? extends Object> objects, final String comma, final String and) {
+	public static String implodeCommaAnd(final Collection<? extends Object> objects, final String comma, final String and) {
 		return implodeCommaAndDot(objects, comma, and, "");
 	}
 	
-	public String implodeCommaAndDot(final Collection<? extends Object> objects, final String color) {
+	public static String implodeCommaAndDot(final Collection<? extends Object> objects, final String color) {
 		return implodeCommaAndDot(objects, color + ", ", color + " and ", color + ".");
 	}
 	
-	public String implodeCommaAnd(final Collection<? extends Object> objects, final String color) {
+	public static String implodeCommaAnd(final Collection<? extends Object> objects, final String color) {
 		return implodeCommaAndDot(objects, color + ", ", color + " and ", "");
 	}
 	
-	public String implodeCommaAndDot(final Collection<? extends Object> objects) {
+	public static String implodeCommaAndDot(final Collection<? extends Object> objects) {
 		return implodeCommaAndDot(objects, "");
 	}
 	
-	public String implodeCommaAnd(final Collection<? extends Object> objects) {
+	public static String implodeCommaAnd(final Collection<? extends Object> objects) {
 		return implodeCommaAnd(objects, "");
 	}
 	
 	// A-An
 	
-	public boolean isVowel(String str) {
+	public static boolean isVowel(String str) {
 		if (str == null || str.length() == 0)
 			return false;
 		return vowel.contains(str.substring(0, 1));
 	}
 	
-	public String aan(String noun) {
+	public static String aan(String noun) {
 		return isVowel(noun) ? "an" : "a";
 	}
 	
 	// Material name tools
 	
-	public String getNicedEnumString(String str) {
+	public static String getNicedEnumString(String str) {
 		List<String> parts = new ArrayList<String>();
 		for (String part : str.toLowerCase().split("[\\s_]+")) {
 			parts.add(upperCaseFirst(part));
@@ -338,20 +337,20 @@ public class Text {
 		return implode(parts, " ");
 	}
 	
-	public String getNicedEnum(Object enumObject) {
+	public static String getNicedEnum(Object enumObject) {
 		return getNicedEnumString(enumObject.toString());
 	}
 	
-//	public String getMaterialName(Material material) {
-//		return getNicedEnum(material);
-//	}
+	public static String getMaterialName(Material material) {
+		return getNicedEnum(material);
+	}
 	
 	// Paging
 	
-	private final String titleizeLine = repeat("-", 48);
-	private final int titleizeBalance = -1;
+	private final static String titleizeLine = repeat("-", 48);
+	private final static int titleizeBalance = -1;
 	
-	public String titleize(String str, boolean console) {
+	public static String titleize(String str, boolean console) {
 		String center = "- [ " + of(console, "<l>") + str + of(console, "<r>") + " ] -";
 		int centerlen = ChatColor.stripColor(center).length();
 		int pivot = titleizeLine.length() / 2;
@@ -364,53 +363,54 @@ public class Text {
 			return of(console, "<r>") + center;
 	}
 	
-	public ArrayList<String> getPage(List<String> lines, int pageHumanBased, String title, boolean console, Locale lang) {
-		return getPage(lines, pageHumanBased, title, PAGEHEIGHT_PLAYER, console, lang);
-	}
-	
-//	public ArrayList<String> getPage(List<String> lines, int pageHumanBased, String title, CommandSender sender, Locale lang) {
+//	public static ArrayList<String> getPage(List<String> lines, int pageHumanBased, String title, boolean console, Locale lang) {
+//		return getPage(lines, pageHumanBased, title, PAGEHEIGHT_PLAYER, console, lang);
+//	}
+//	
+//	public static ArrayList<String> getPage(List<String> lines, int pageHumanBased, String title, CommandSender sender, Locale lang) {
 //		return getPage(lines, pageHumanBased, title, sender instanceof Player ? Text.PAGEHEIGHT_PLAYER : Text.PAGEHEIGHT_CONSOLE, !(sender instanceof Player), lang);
 //	}
-	
-	public ArrayList<String> getPage(List<String> lines, int pageHumanBased, String title, int pageheight, boolean console, Locale locale) {
-		ArrayList<String> ret = new ArrayList<String>();
-		int pageZeroBased = pageHumanBased - 1;
-		int pagecount = (int) Math.ceil((double) lines.size() / pageheight);
-
-		String prefix = lang.get(locale, "prefix", true, console);
-		String noPages = lang.get(locale, "noPages", true, console);
-		String invalidPages = lang.get(locale, "invalidPage", true, console, pagecount);
-		
-		ret.add(prefix + titleize(title + of(console, "<gold>") + " [" + pageHumanBased + "/" + pagecount + "]", console));
-		
-		if (pagecount == 0) {
-			ret.add(prefix + noPages);
-			return ret;
-		} else if (pageZeroBased < 0 || pageHumanBased > pagecount) {
-			ret.add(prefix + invalidPages);
-			return ret;
-		}
-		
-		int from = pageZeroBased * pageheight;
-		int to = from + pageheight;
-		if (to > lines.size()) {
-			to = lines.size();
-		}
-		
-		List<String> subList = lines.subList(from, to);
-		
-		for (int i = 0; i < subList.size(); i++) {
-			subList.set(i, prefix + subList.get(i));
-		}
-		
-		ret.addAll(subList);
-		
-		return ret;
-	}
+//	
+//	public static ArrayList<String> getPage(List<String> lines, int pageHumanBased, String title, int pageheight, boolean console, Locale locale) {
+//		ArrayList<String> ret = new ArrayList<String>();
+//		int pageZeroBased = pageHumanBased - 1;
+//		int pagecount = (int) Math.ceil((double) lines.size() / pageheight);
+//
+//		Lang lang = DaggerLangFactory.create().make();
+//		String prefix = lang.get(locale, "prefix", true, console);
+//		String noPages = lang.get(locale, "noPages", true, console);
+//		String invalidPages = lang.get(locale, "invalidPage", true, console, pagecount);
+//		
+//		ret.add(prefix + titleize(title + of(console, "<gold>") + " [" + pageHumanBased + "/" + pagecount + "]", console));
+//		
+//		if (pagecount == 0) {
+//			ret.add(prefix + noPages);
+//			return ret;
+//		} else if (pageZeroBased < 0 || pageHumanBased > pagecount) {
+//			ret.add(prefix + invalidPages);
+//			return ret;
+//		}
+//		
+//		int from = pageZeroBased * pageheight;
+//		int to = from + pageheight;
+//		if (to > lines.size()) {
+//			to = lines.size();
+//		}
+//		
+//		List<String> subList = lines.subList(from, to);
+//		
+//		for (int i = 0; i < subList.size(); i++) {
+//			subList.set(i, prefix + subList.get(i));
+//		}
+//		
+//		ret.addAll(subList);
+//		
+//		return ret;
+//	}
 	
 	// Describing Time
 	
-	public String getTimeDeltaDescriptionRelNow(long millis) {
+	public static String getTimeDeltaDescriptionRelNow(long millis) {
 		String ret = "";
 		
 		double millisLeft = Math.abs(millis);
@@ -446,7 +446,7 @@ public class Text {
 	
 	// String Comparison
 	
-	public String getBestCIStart(Collection<String> candidates, String start) {
+	public static String getBestCIStart(Collection<String> candidates, String start) {
 		String ret = null;
 		int best = 0;
 		
@@ -474,7 +474,7 @@ public class Text {
 
 	// Tokenization
 	
-	public List<String> tokenizeArguments(String str) {
+	public static List<String> tokenizeArguments(String str) {
 		List<String> ret = new ArrayList<String>();
 		StringBuilder token = null;
 		boolean escaping = false;

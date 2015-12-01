@@ -10,13 +10,10 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 
-import uk.co.terragaming.TerraCore.Util.Text.Text;
-
 public class Lang {
 	
 	@Inject Lang(){}
 	@Inject Logger logger;
-	@Inject Text text;
 	@Inject File configDir;
 	
 	public HashMap<Locale, ResourceBundle> bundles = new HashMap<>();
@@ -35,20 +32,20 @@ public class Lang {
 		}
 	}
 	
-	public String get(Locale lang, String key, boolean parsed, boolean console, Object... args){
-		ResourceBundle bundle = getBundle(lang);;
-		
-		String ret;
-		if (bundle.containsKey(key)){
-			ret = bundle.getString(key);
-		} else{
-			logger.error("No translation for '" + key + "' in locale '" + lang.toString() + "'.");
-			ret = bundles.get(Locale.getDefault()).getString(key);
-		}
-		
-		if (parsed) ret = text.of(console, ret, args);
-		return ret;
-	}
+//	public String get(Locale lang, String key, boolean parsed, boolean console, Object... args){
+//		ResourceBundle bundle = getBundle(lang);;
+//		
+//		String ret;
+//		if (bundle.containsKey(key)){
+//			ret = bundle.getString(key);
+//		} else{
+//			logger.error("No translation for '" + key + "' in locale '" + lang.toString() + "'.");
+//			ret = bundles.get(Locale.getDefault()).getString(key);
+//		}
+//		
+//		if (parsed) ret = Text.of(console, ret, args);
+//		return ret;
+//	}
 	
 	
 }
