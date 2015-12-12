@@ -4,16 +4,19 @@ import java.io.File;
 
 import javax.inject.Singleton;
 
+import org.slf4j.Logger;
+
+import uk.co.terragaming.TerraCore.Enums.ServerMode;
+import uk.co.terragaming.TerraCore.Foundation.GuiceModule;
+import uk.co.terragaming.TerraCore.Foundation.Module;
 import uk.co.terragaming.TerraCore.Foundation.ModuleManager;
 import uk.co.terragaming.TerraCore.Util.Logger.TerraLogger;
 
+import com.google.inject.Provides;
 import com.google.inject.name.Named;
 
-import dagger.Module;
-import dagger.Provides;
-
-@Module(includes = SpongeModule.class)
-public class CoreModule {
+@Module(name = "CoreModule")
+public class CoreModule extends GuiceModule{
 	
 	@Provides @Singleton
 	TerraPlugin getPlugin(){
@@ -31,8 +34,18 @@ public class CoreModule {
 	}
 	
 	@Provides @Singleton
-	TerraLogger getLogger(){
-		return new TerraLogger();
+	TerraLogger getTerraLogger(TerraPlugin plugin){
+		return plugin.logger;
+	}
+	
+	@Provides @Singleton
+	Logger getLogger(TerraPlugin plugin){
+		return plugin.logger;
+	}
+	
+	@Provides
+	ServerMode provideServerMode(TerraPlugin plugin){
+		return plugin.serverMode;
 	}
 	
 	@Provides @Singleton

@@ -8,18 +8,18 @@ import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 
 import org.slf4j.Logger;
+import org.spongepowered.api.config.ConfigDir;
+import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.service.config.ConfigDir;
-import org.spongepowered.api.service.config.DefaultConfig;
 
 import uk.co.terragaming.TerraCore.Enums.ServerMode;
 import uk.co.terragaming.TerraCore.Foundation.ModuleManager;
-import uk.co.terragaming.TerraCore.Foundation.Factories.DaggerModuleManagerFactory;
-import uk.co.terragaming.TerraCore.Util.Factories.DaggerTerraLoggerFactory;
 import uk.co.terragaming.TerraCore.Util.Logger.TerraLogger;
 import uk.co.terragaming.TerraCore.Util.Text.Text;
+
+import com.google.inject.Injector;
 
 public class TerraPlugin {
 	
@@ -31,6 +31,13 @@ public class TerraPlugin {
 	public TerraLogger logger;
 	public File configDir;
 	public File config;
+	public Injector baseInjector;
+	public Injector injector;
+	
+	@Inject
+	public void setBaseInjector(Injector baseInjector){
+		this.baseInjector = baseInjector;
+	}
 	
 	@Inject
 	public void setLogger(Logger logger){
@@ -55,18 +62,18 @@ public class TerraPlugin {
 	public TerraPlugin(){
 		instance = this;
 		System.setProperty("jansi.passthrough", "true");
-		moduleManager = DaggerModuleManagerFactory.create().make();
+		moduleManager = new ModuleManager();
 		moduleManager.registerAll();
 	}
 	
 	@Listener
 	public void onPreInit(GamePreInitializationEvent event){
-		logger = DaggerTerraLoggerFactory.create().make();
+		logger = new TerraLogger();
 		
 		PluginContainer plugin = event.getGame().getPluginManager().fromInstance(this).get();
 				
 		String spacer = Text.repeat("-", (" Launching " + plugin.getName() + " V" + plugin.getVersion() + " ").length());
-		String msg = " <l> Launching " + plugin.getName() + " V" + plugin.getVersion() + " ";
+		String msg = "<l> Launching " + plugin.getName() + " V" + plugin.getVersion() + " ";
 		
 		logger.blank();
 		logger.info(spacer);
@@ -74,10 +81,31 @@ public class TerraPlugin {
 		logger.info(spacer);
 		logger.blank();
 		
+		logger.info("<l>Initializing Modules.<r>");
+		logger.blank();
+		
 		moduleManager.constructAll();
 		
 		logger.blank();
-		logger.info("<l>All <h>%s<l> enabled mechanics have been loaded.<r>", moduleManager.getModules().size());
+		logger.info("All <h>%s<r> enabled mechanics have been loaded.", moduleManager.getEnabledCount());
+		
+		logger.blank();
+		logger.info("<l>Creating Injector.<r>");
+		
+		injector = baseInjector.createChildInjector(moduleManager.getGuiceModules());
+
+		logger.info("Injector Created.");
+		
+		moduleManager.forEach((c)->{
+			Object obj = c.get();
+			if (obj == null) return;
+			injector.injectMembers(obj);
+		});
+		
+		logger.info("Module Injection Complete.");
+		
+		logger.blank();
+		logger.info("<l>Server loaded in <h>%s<l> mode.<r>", "MODE");
 		logger.blank();
 		
 		//serverMode = ServerMode.valueOf(getConfig().get("TerraCraft.Server.Mode").toString());

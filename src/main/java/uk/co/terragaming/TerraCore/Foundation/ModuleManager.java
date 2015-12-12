@@ -20,8 +20,29 @@ public class ModuleManager implements Iterable<ModuleContainer>{
 	private HashMap<Class<?>, ModuleContainer> modules = new HashMap<>();
 	private List<ModuleContainer> rootModules = Lists.newArrayList();
 	
-	public Collection<ModuleContainer> getModules(){
+	public int getEnabledCount(){
+		int ret = 0;
+		
+		for(ModuleContainer m : getModuleContainers()){
+			if (m.isEnabled()) ret++;
+		}
+		
+		return ret;
+	}
+	
+	public Collection<ModuleContainer> getModuleContainers(){
 		return modules.values();
+	}
+	
+	public Collection<com.google.inject.Module> getGuiceModules(){
+		List<com.google.inject.Module> ret = Lists.newArrayList();
+		for (ModuleContainer container : getModuleContainers()){
+			Object obj = container.get();
+			if (obj == null) continue;
+			if (!(obj instanceof Module)) continue;
+			ret.add((com.google.inject.Module) obj);
+		}
+		return ret;
 	}
 	
 	public void constructAll(){

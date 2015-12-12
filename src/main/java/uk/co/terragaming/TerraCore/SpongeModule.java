@@ -10,22 +10,21 @@ import org.spongepowered.api.MinecraftVersion;
 import org.spongepowered.api.Platform;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.data.ImmutableDataRegistry;
-import org.spongepowered.api.data.manipulator.DataManipulatorRegistry;
+import org.spongepowered.api.command.CommandManager;
 import org.spongepowered.api.data.property.PropertyRegistry;
+import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.network.ChannelRegistrar;
 import org.spongepowered.api.plugin.PluginManager;
+import org.spongepowered.api.scheduler.Scheduler;
 import org.spongepowered.api.service.ServiceManager;
-import org.spongepowered.api.service.command.CommandService;
-import org.spongepowered.api.service.event.EventManager;
-import org.spongepowered.api.service.persistence.SerializationManager;
-import org.spongepowered.api.service.scheduler.SchedulerService;
 
-import dagger.Module;
-import dagger.Provides;
+import uk.co.terragaming.TerraCore.Foundation.GuiceModule;
+import uk.co.terragaming.TerraCore.Foundation.Module;
 
-@Module
-public class SpongeModule {
+import com.google.inject.Provides;
+
+@Module(name = "SpongeModule", parent = CoreModule.class)
+public class SpongeModule extends GuiceModule{
 	
 	@Provides @Singleton
 	Game getGame(){
@@ -53,13 +52,8 @@ public class SpongeModule {
 	}
 	
 	@Provides @Singleton
-	SchedulerService getScheduler(){
+	Scheduler getScheduler(){
 		return Sponge.getScheduler();
-	}
-	
-	@Provides @Singleton
-	SerializationManager getSerializationService(){
-		return Sponge.getSerializationService();
 	}
 	
 	@Provides @Singleton
@@ -78,23 +72,13 @@ public class SpongeModule {
 	}
 	
 	@Provides @Singleton
-	CommandService getCommandDispatcher(){
+	CommandManager getCommandDispatcher(){
 		return Sponge.getCommandDispatcher();
 	}
 	
 	@Provides @Singleton
 	ChannelRegistrar getChannelRegistrar(){
 		return Sponge.getChannelRegistrar();
-	}
-	
-	@Provides @Singleton
-	DataManipulatorRegistry getManipulatorRegistry(){
-		return Sponge.getManipulatorRegistry();
-	}
-	
-	@Provides @Singleton
-	ImmutableDataRegistry getImmutableManipulatorRegistry(){
-		return Sponge.getImmutableManipulatorRegistry();
 	}
 	
 	@Provides @Singleton

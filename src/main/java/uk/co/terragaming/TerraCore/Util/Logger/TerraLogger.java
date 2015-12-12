@@ -8,15 +8,30 @@ import uk.co.terragaming.TerraCore.Util.Text.Text;
 
 public class TerraLogger implements org.slf4j.Logger {
 	
-	private static final String prefix = "[<l>TerraCraft<r>]";
-	private final String info = "[<l>INFO<r>] ";
-	private final String debug = "[<l>DEBUG<r>] ";
-	private final String warn = "[<l>WARN<r>] ";
-	private final String error = "[<l>ERROR<r>] ";
-	private final String trace = "[<l>TRACE<r>] ";
+//	private static final String prefix = "[<l>TerraCraft<r>]";
+//	private final String info = "[<l>INFO<r>] ";
+//	private final String debug = "[<l>DEBUG<r>] ";
+//	private final String warn = "[<l>WARN<r>] ";
+//	private final String error = "[<l>ERROR<r>] ";
+//	private final String trace = "[<l>TRACE<r>] ";
+	
+	private static final String prefix = "";
+	private final String info = "";
+	private final String debug = "";
+	private final String warn = "";
+	private final String error = "";
+	private final String trace = "";
 	private final String reset = "<r>";
 	
 	Logger base = TerraPlugin.instance.baseLogger;
+	
+	public TerraLogger(){
+		
+	}
+	
+	public TerraLogger(Logger base){
+		this.base = base;
+	}
 	
 	@Override
 	public String getName() {
@@ -155,7 +170,7 @@ public class TerraLogger implements org.slf4j.Logger {
 	
 	@Override
 	public void info(String format, Object arg) {
-		
+		info(String.format(format, arg));
 	}
 	
 	@Override
@@ -324,6 +339,6 @@ public class TerraLogger implements org.slf4j.Logger {
 	}
 	
 	public void blank() {
-		System.out.println(" ");
+		this.info(" ");
 	}
 }
