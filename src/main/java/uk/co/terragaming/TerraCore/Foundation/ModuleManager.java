@@ -39,7 +39,7 @@ public class ModuleManager implements Iterable<ModuleContainer>{
 		for (ModuleContainer container : getModuleContainers()){
 			Object obj = container.get();
 			if (obj == null) continue;
-			if (!(obj instanceof Module)) continue;
+			if (!(obj instanceof com.google.inject.Module)) continue;
 			ret.add((com.google.inject.Module) obj);
 		}
 		return ret;

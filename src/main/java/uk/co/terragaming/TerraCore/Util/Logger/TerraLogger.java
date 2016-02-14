@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.Marker;
 
 import uk.co.terragaming.TerraCore.TerraPlugin;
-import uk.co.terragaming.TerraCore.Util.Text.Text;
+import uk.co.terragaming.TerraCore.Util.Text.MyText;
 
 public class TerraLogger implements org.slf4j.Logger {
 	
@@ -45,27 +45,27 @@ public class TerraLogger implements org.slf4j.Logger {
 	
 	@Override
 	public void trace(String msg) {
-		base.trace(Text.of(true, prefix + trace + msg + reset));
+		base.trace(MyText.of(true, prefix + trace + msg + reset));
 	}
 	
 	@Override
 	public void trace(String format, Object arg) {
-		base.trace(Text.of(true, prefix + trace + format + reset, arg));
+		base.trace(MyText.of(true, prefix + trace + format + reset, arg));
 	}
 	
 	@Override
 	public void trace(String format, Object arg1, Object arg2) {
-		base.trace(Text.of(true, prefix + trace + format + reset, arg1, arg2));
+		base.trace(MyText.of(true, prefix + trace + format + reset, arg1, arg2));
 	}
 	
 	@Override
 	public void trace(String format, Object... arguments) {
-		base.trace(Text.of(true, prefix + trace + format + reset, arguments));
+		base.trace(MyText.of(true, prefix + trace + format + reset, arguments));
 	}
 	
 	@Override
 	public void trace(String msg, Throwable t) {
-		base.trace(Text.of(true, prefix + trace + msg + reset), t);
+		base.trace(MyText.of(true, prefix + trace + msg + reset), t);
 	}
 	
 	@Override
@@ -75,7 +75,7 @@ public class TerraLogger implements org.slf4j.Logger {
 	
 	@Override
 	public void trace(Marker marker, String msg) {
-		base.trace(marker, Text.of(true, prefix + trace + msg + reset));
+		base.trace(marker, MyText.of(true, prefix + trace + msg + reset));
 	}
 	
 	@Override
@@ -105,7 +105,7 @@ public class TerraLogger implements org.slf4j.Logger {
 	
 	@Override
 	public void debug(String msg) {
-		base.debug(Text.of(true, prefix + debug + msg + reset));
+		base.debug(MyText.of(true, prefix + debug + msg + reset));
 	}
 	
 	@Override
@@ -135,7 +135,7 @@ public class TerraLogger implements org.slf4j.Logger {
 	
 	@Override
 	public void debug(Marker marker, String msg) {
-		base.debug(marker, Text.of(true, prefix + debug + msg + reset));
+		base.debug(marker, MyText.of(true, prefix + debug + msg + reset));
 	}
 	
 	@Override
@@ -165,7 +165,7 @@ public class TerraLogger implements org.slf4j.Logger {
 	
 	@Override
 	public void info(String msg) {
-		base.info(Text.of(true, prefix + info + msg + reset));
+		base.info(MyText.of(true, prefix + info + msg + reset));
 	}
 	
 	@Override
@@ -175,17 +175,17 @@ public class TerraLogger implements org.slf4j.Logger {
 	
 	@Override
 	public void info(String format, Object arg1, Object arg2) {
-		
+		info(String.format(format, arg1, arg2));
 	}
 	
 	@Override
 	public void info(String format, Object... arguments) {
-		
+		info(String.format(format, arguments));	
 	}
 	
 	@Override
 	public void info(String msg, Throwable t) {
-		
+		base.info(MyText.of(true, prefix + info + msg + reset), t);
 	}
 	
 	@Override
@@ -195,7 +195,7 @@ public class TerraLogger implements org.slf4j.Logger {
 	
 	@Override
 	public void info(Marker marker, String msg) {
-		base.info(marker, Text.of(true, prefix + info + msg + reset));
+		base.info(marker, MyText.of(true, prefix + info + msg + reset));
 	}
 	
 	@Override
@@ -225,7 +225,7 @@ public class TerraLogger implements org.slf4j.Logger {
 	
 	@Override
 	public void warn(String msg) {
-		base.warn(Text.of(true, prefix + warn + msg + reset));
+		base.warn(MyText.of(true, prefix + warn + msg + reset));
 	}
 	
 	@Override
@@ -255,7 +255,7 @@ public class TerraLogger implements org.slf4j.Logger {
 	
 	@Override
 	public void warn(Marker marker, String msg) {
-		base.warn(marker, Text.of(true, prefix + warn + msg + reset));
+		base.warn(marker, MyText.of(true, prefix + warn + msg + reset));
 	}
 	
 	@Override
@@ -285,7 +285,7 @@ public class TerraLogger implements org.slf4j.Logger {
 	
 	@Override
 	public void error(String msg) {
-		base.error(Text.of(true, prefix + error + msg + reset));
+		base.error(MyText.of(true, prefix + error + msg + reset));
 	}
 	
 	@Override
@@ -315,7 +315,7 @@ public class TerraLogger implements org.slf4j.Logger {
 	
 	@Override
 	public void error(Marker marker, String msg) {
-		base.error(marker, Text.of(true, prefix + error + msg + reset));
+		base.error(marker, MyText.of(true, prefix + error + msg + reset));
 	}
 	
 	@Override

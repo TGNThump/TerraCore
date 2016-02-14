@@ -85,6 +85,10 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+		<repository>
+			<id>maven.sk89q.com</id>
+			<url>http://maven.sk89q.com/repo/</url>
+		</repository>
 	</repositories>
 
 	<pluginRepositories>

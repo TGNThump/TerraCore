@@ -1,6 +1,7 @@
 package uk.co.terragaming.TerraCore;
 
 import java.io.File;
+import java.util.Collection;
 
 import javax.inject.Inject;
 
@@ -17,9 +18,10 @@ import org.spongepowered.api.plugin.PluginContainer;
 import uk.co.terragaming.TerraCore.Enums.ServerMode;
 import uk.co.terragaming.TerraCore.Foundation.ModuleManager;
 import uk.co.terragaming.TerraCore.Util.Logger.TerraLogger;
-import uk.co.terragaming.TerraCore.Util.Text.Text;
+import uk.co.terragaming.TerraCore.Util.Text.MyText;
 
 import com.google.inject.Injector;
+import com.google.inject.Module;
 
 public class TerraPlugin {
 	
@@ -72,7 +74,7 @@ public class TerraPlugin {
 		
 		PluginContainer plugin = event.getGame().getPluginManager().fromInstance(this).get();
 				
-		String spacer = Text.repeat("-", (" Launching " + plugin.getName() + " V" + plugin.getVersion() + " ").length());
+		String spacer = MyText.repeat("-", (" Launching " + plugin.getName() + " V" + plugin.getVersion() + " ").length());
 		String msg = "<l> Launching " + plugin.getName() + " V" + plugin.getVersion() + " ";
 		
 		logger.blank();
@@ -92,8 +94,16 @@ public class TerraPlugin {
 		logger.blank();
 		logger.info("<l>Creating Injector.<r>");
 		
-		injector = baseInjector.createChildInjector(moduleManager.getGuiceModules());
-
+		Collection<Module> modules = moduleManager.getGuiceModules();
+		
+		injector = baseInjector.createChildInjector(modules);
+		
+		logger.blank();
+		injector.getAllBindings().forEach((key, value) -> {
+			logger.info("<h>%s<r>: %s", key, value);
+		});
+		logger.blank();
+		
 		logger.info("Injector Created.");
 		
 		moduleManager.forEach((c)->{

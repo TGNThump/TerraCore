@@ -4,8 +4,6 @@ import java.io.File;
 
 import javax.inject.Singleton;
 
-import org.slf4j.Logger;
-
 import uk.co.terragaming.TerraCore.Enums.ServerMode;
 import uk.co.terragaming.TerraCore.Foundation.GuiceModule;
 import uk.co.terragaming.TerraCore.Foundation.Module;
@@ -35,11 +33,6 @@ public class CoreModule extends GuiceModule{
 	
 	@Provides @Singleton
 	TerraLogger getTerraLogger(TerraPlugin plugin){
-		return plugin.logger;
-	}
-	
-	@Provides @Singleton
-	Logger getLogger(TerraPlugin plugin){
 		return plugin.logger;
 	}
 	

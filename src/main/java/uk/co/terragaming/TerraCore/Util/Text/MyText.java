@@ -17,9 +17,9 @@ import org.spongepowered.api.effect.particle.ParticleType.Material;
 import uk.co.terragaming.TerraCore.Util.Collections.Collections;
 
 
-public class Text {
+public class MyText {
 	
-	private Text(){}
+	private MyText(){}
 	
 	protected static final int PAGEHEIGHT_PLAYER = 9;
 	protected static final int PAGEHEIGHT_CONSOLE = 50;
