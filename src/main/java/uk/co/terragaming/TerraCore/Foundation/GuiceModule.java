@@ -8,4 +8,6 @@ public abstract class GuiceModule extends com.google.inject.AbstractModule{
 		
 	}
 	
+	public void onEnable() {}
+	
 }

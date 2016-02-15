@@ -1,15 +1,14 @@
 package uk.co.terragaming.TerraCore.Util.Text;
 
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.TextBuilder;
-import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.text.Text.Builder;
 
 
 public class TextUtils {
 	
 	public static Text repeat(Text string, int times){
 		
-		TextBuilder builder = Texts.builder();
+		Builder builder = Text.builder();
 				
 		for (int i = 0; i < times; i++){
 			builder.append(string);
@@ -19,7 +18,7 @@ public class TextUtils {
 	}
 	
 	public static Text repeat(String string, int times){
-		return repeat(Texts.of(string), times);		
+		return repeat(Text.of(string), times);		
 	}
 	
 }

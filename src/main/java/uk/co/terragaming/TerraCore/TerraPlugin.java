@@ -9,10 +9,12 @@ import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 
 import org.slf4j.Logger;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
+import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 
 import uk.co.terragaming.TerraCore.Enums.ServerMode;
@@ -23,6 +25,7 @@ import uk.co.terragaming.TerraCore.Util.Text.MyText;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
+@Plugin(id = "TerraCraft", name = "TerraCraft", version = "0.0.4")
 public class TerraPlugin {
 	
 	public static TerraPlugin instance;
@@ -72,7 +75,7 @@ public class TerraPlugin {
 	public void onPreInit(GamePreInitializationEvent event){
 		logger = new TerraLogger();
 		
-		PluginContainer plugin = event.getGame().getPluginManager().fromInstance(this).get();
+		PluginContainer plugin = Sponge.getGame().getPluginManager().fromInstance(this).get();
 				
 		String spacer = MyText.repeat("-", (" Launching " + plugin.getName() + " V" + plugin.getVersion() + " ").length());
 		String msg = "<l> Launching " + plugin.getName() + " V" + plugin.getVersion() + " ";
@@ -98,10 +101,10 @@ public class TerraPlugin {
 		
 		injector = baseInjector.createChildInjector(modules);
 		
-		logger.blank();
-		injector.getAllBindings().forEach((key, value) -> {
-			logger.info("<h>%s<r>: %s", key, value);
-		});
+//		logger.blank();
+//		injector.getAllBindings().forEach((key, value) -> {
+//			logger.info("<h>%s<r>: %s", key, value);
+//		});
 		logger.blank();
 		
 		logger.info("Injector Created.");
@@ -113,6 +116,8 @@ public class TerraPlugin {
 		});
 		
 		logger.info("Module Injection Complete.");
+		
+		moduleManager.onEnableAll();
 		
 		logger.blank();
 		logger.info("<l>Server loaded in <h>%s<l> mode.<r>", "MODE");

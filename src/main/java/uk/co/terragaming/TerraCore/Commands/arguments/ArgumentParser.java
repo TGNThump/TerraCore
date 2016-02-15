@@ -3,8 +3,7 @@ package uk.co.terragaming.TerraCore.Commands.arguments;
 import java.util.List;
 
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.TextBuilder;
-import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.format.TextColors;
 
 import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException;
@@ -64,12 +63,12 @@ public interface ArgumentParser {
 		checkTypeSupported(type);
 		
 		Text suggs = getSuggestionText(type, "");
-		if (suggs.equals(Texts.of())) 
-			return Texts.of(
+		if (suggs.equals(Text.of())) 
+			return Text.of(
 					TextColors.GREEN, "Type: ", TextColors.WHITE, getArgumentTypeName(type)
 					);
 		else 
-			return Texts.of(
+			return Text.of(
 					TextColors.GREEN, "Type: ", TextColors.WHITE, getArgumentTypeName(type), "\n",
 					getSuggestionText(type, "")
 					);
@@ -83,19 +82,19 @@ public interface ArgumentParser {
 	default Text getSuggestionText(Class<?> type, String prefix) throws IllegalArgumentException {
 		checkTypeSupported(type);
 		
-		TextBuilder tb = Texts.builder();
+		Builder tb = Text.builder();
 		
 		List<String> suggs = suggestArguments(type, prefix);
-		if (suggs.isEmpty()) return Texts.of();
+		if (suggs.isEmpty()) return Text.of();
 		
 		for (int i = 0; i < suggs.size(); i++){
 			if (i > 4){
-				tb.append(Texts.of(TextColors.WHITE, "..."));
+				tb.append(Text.of(TextColors.WHITE, "..."));
 				break;
 			}
 			
-			if (i != 0) tb.append(Texts.of(TextColors.WHITE, ", "));
-			tb.append(Texts.of(TextColors.GRAY, suggs.get(i)));
+			if (i != 0) tb.append(Text.of(TextColors.WHITE, ", "));
+			tb.append(Text.of(TextColors.GRAY, suggs.get(i)));
 		}
 		
 		return tb.build();

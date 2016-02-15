@@ -12,8 +12,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.spongepowered.api.effect.particle.ParticleType.Material;
-
 import uk.co.terragaming.TerraCore.Util.Collections.Collections;
 
 
@@ -341,9 +339,9 @@ public class MyText {
 		return getNicedEnumString(enumObject.toString());
 	}
 	
-	public static String getMaterialName(Material material) {
-		return getNicedEnum(material);
-	}
+//	public static String getMaterialName(Material material) {
+//		return getNicedEnum(material);
+//	}
 	
 	// Paging
 	

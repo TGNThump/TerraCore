@@ -1,7 +1,6 @@
 package uk.co.terragaming.TerraCore.Commands;
 
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.service.ProviderExistsException;
 
 import uk.co.terragaming.TerraCore.CoreModule;
 import uk.co.terragaming.TerraCore.TerraPlugin;
@@ -19,19 +18,16 @@ public class CommandModule extends GuiceModule{
 	
 	private CommandHandler commandHandler;
 	
-	public CommandModule(){
+	@Override
+	public void onEnable() {
 		commandHandler = new CommandHandler(plugin);
-		try {
-			Sponge.getServiceManager().setProvider(this, MethodCommandService.class, commandHandler);
-		} catch (ProviderExistsException e) {
-			e.printStackTrace();
-		}
-		Sponge.getEventManager().registerListeners(this, commandHandler);
+		Sponge.getServiceManager().setProvider(plugin, MethodCommandService.class, commandHandler);
+		Sponge.getEventManager().registerListeners(plugin, commandHandler);
 	}
 	
 	@Provides
 	MethodCommandService getCommandHandler(){
-		return Sponge.getServiceManager().provide(MethodCommandService.class).get();
+		return commandHandler;
 	}
 	
 }

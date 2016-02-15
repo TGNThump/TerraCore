@@ -9,7 +9,6 @@ import org.spongepowered.api.Sponge;
 
 import uk.co.terragaming.TerraCore.TerraPlugin;
 import uk.co.terragaming.TerraCore.Util.Text.MyText;
-import uk.co.terragaming.TerraCraft.TerraCraft;
 
 import com.google.common.collect.Lists;
 
@@ -31,7 +30,7 @@ public class ModuleContainer {
 		if (!isEnabled()) return;
 		try {
 			module = mClass.newInstance();
-			TerraCraft.instance.logger.info(MyText.repeat("   ", getDepth()) + "<h>"  + getName() + "<r> Initialized.");
+			TerraPlugin.instance.logger.info(MyText.repeat("   ", getDepth()) + "<h>"  + getName() + "<r> Initialized.");
 			Sponge.getEventManager().registerListeners(TerraPlugin.instance, module);
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();

@@ -7,10 +7,12 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.user.UserStorageService;
-
-import com.google.common.collect.Lists;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException;
+
+import com.google.common.collect.Lists;
 
 
 public class UserArgument implements ArgumentParser {
@@ -32,7 +34,7 @@ public class UserArgument implements ArgumentParser {
 			return (T) u.get();
 		}
 		
-		throw new ArgumentException("Expected a player who has joined the server, got '" + arg + "'");
+		throw new ArgumentException(Text.of(TextColors.RED, "Expected a ", TextColors.AQUA, getArgumentTypeName(type), TextColors.RED,  ", got '", TextColors.LIGHT_PURPLE, arg, TextColors.RED, "'"), arg, this, type);
 	}
 	
 	@Override

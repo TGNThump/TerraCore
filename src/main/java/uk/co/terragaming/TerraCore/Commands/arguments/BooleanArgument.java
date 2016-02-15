@@ -2,6 +2,9 @@ package uk.co.terragaming.TerraCore.Commands.arguments;
 
 import java.util.List;
 
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
+
 import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException;
 
 import com.google.common.collect.Lists;
@@ -25,7 +28,7 @@ public class BooleanArgument implements ArgumentParser {
 		if (TRUE_OPTIONS.contains(next)) return (T) Boolean.TRUE;
 		if (FALSE_OPTIONS.contains(next)) return (T) Boolean.FALSE;
 
-		throw new ArgumentException("Excepted a boolean (yes/no), got '" + next + "'");
+		throw new ArgumentException(Text.of(TextColors.RED, "Expected a ", TextColors.AQUA, getArgumentTypeName(type), TextColors.RED,  ", got '", TextColors.LIGHT_PURPLE, arg, TextColors.RED, "'"), arg, this, type);
 	}
 	
 	@Override

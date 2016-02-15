@@ -16,11 +16,6 @@ import com.google.inject.name.Named;
 @Module(name = "CoreModule")
 public class CoreModule extends GuiceModule{
 	
-	@Provides @Singleton
-	TerraPlugin getPlugin(){
-		return TerraPlugin.instance;
-	}
-	
 	@Provides @Named("configDir") @Singleton
 	File getConfigDir(TerraPlugin plugin){
 		return plugin.configDir;

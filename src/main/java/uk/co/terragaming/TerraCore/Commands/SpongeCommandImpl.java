@@ -11,7 +11,6 @@ import org.spongepowered.api.text.Text;
 
 import com.google.common.collect.Lists;
 
-
 public class SpongeCommandImpl implements CommandCallable{
 	
 	private String label;
@@ -30,7 +29,6 @@ public class SpongeCommandImpl implements CommandCallable{
 	@Override
 	public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
 		List<String> suggestions = Lists.newArrayList();
-		
 		suggestions.addAll(commandHandler.getCommandSuggestions(source, label + " " + arguments));
 		return suggestions;
 	}
@@ -52,7 +50,7 @@ public class SpongeCommandImpl implements CommandCallable{
 
 	@Override
 	public Text getUsage(CommandSource source) {
-		return commandHandler.getCommandUsage();
+		return commandHandler.getCommandUsage(source, label);
 	}
 
 	

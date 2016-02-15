@@ -3,6 +3,7 @@ package uk.co.terragaming.TerraCore.Commands;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static uk.co.terragaming.TerraCore.Util.Conditions.notNull;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
 import java.util.Arrays;
@@ -14,8 +15,7 @@ import java.util.Optional;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.TextBuilder.Literal;
-import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
@@ -25,6 +25,7 @@ import uk.co.terragaming.TerraCore.Commands.annotations.Desc;
 import uk.co.terragaming.TerraCore.Commands.annotations.Help;
 import uk.co.terragaming.TerraCore.Commands.annotations.Perm;
 import uk.co.terragaming.TerraCore.Commands.annotations.Usage;
+import uk.co.terragaming.TerraCore.Commands.arguments.ArgumentParser;
 import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException;
 import uk.co.terragaming.TerraCore.Util.Context;
 import uk.co.terragaming.TerraCore.Util.Text.MyText;
@@ -81,13 +82,15 @@ public class MethodCommand {
 		
 		String parentPath = getParentPath();
 		
-		if (commandHandler.hasCommand(parentPath)){
-			MethodCommand parent = commandHandler.getCommand(parentPath);
-			this.setParent(parent);
-		} else {
-			throw new InvalidParameterException("Command '" + method.toString() + "' Registered before Parent.");
+		if (!parentPath.isEmpty()){
+			if (commandHandler.hasCommand(parentPath)){
+				MethodCommand parent = commandHandler.getCommand(parentPath);
+				this.setParent(parent);
+			} else {
+				throw new InvalidParameterException("Command '" + method.toString() + "' Registered before Parent.");
+			}
 		}
-
+		
 		if (notNull(desc)) this.desc = Optional.of(desc.value());
 		if (notNull(help)) this.help = Optional.of(help.value());
 		if (notNull(usage)) this.usage = Optional.of(usage.value());
@@ -120,15 +123,133 @@ public class MethodCommand {
 	}
 	
 	public List<String> getSuggestions(CommandSource source, String args){
-		// TODO
+
+		List<String> suggestions = Lists.newArrayList();
+		
+		try{
+			parseArgs(source, args);
+		} catch (ArgumentException e){
+			while (e != null){
+				if (e instanceof ArgumentException.NotEnoughArgumentsException){
+					ArgumentParser ap = commandHandler.getArgumentParser(e.getExpectedType());
+					if (args.endsWith(" ") || args.isEmpty()) suggestions.addAll(ap.suggestArguments(e.getExpectedType(), ""));
+				} else if (e instanceof ArgumentException.TooManyArgumentsException){
+				} else {
+					ArgumentParser ap = commandHandler.getArgumentParser(e.getExpectedType());
+					for (String s : ap.suggestArguments(e.getExpectedType(), e.getWrongArgument())){
+						suggestions.add(s);
+					}
+				}
+				
+				e = e.getAnother();
+			}
+		}
+		
+		if (suggestions.size() > 20) suggestions.subList(20, suggestions.size()).clear();
+		return suggestions;
+		
 	}
 	
-	public void execute(CommandSource source, String args) throws ArgumentException{
-		// TODO
+	public CommandResult execute(CommandSource source, String args) throws ArgumentException{
+		List<Object> cmdParams = parseArgs(source, args);
+		
+		boolean p = false;
+		for (String perm : getPerms()){
+			if (source.hasPermission(perm)) p = true;
+		}
+		
+		if (!p){
+			source.sendMessage(Text.of(TextColors.RED, "You do not have permission to execute this command!"));
+			return CommandResult.empty();
+		}
+		
+		
+		
+		try {
+			return (CommandResult) method.invoke(handler, cmdParams.toArray());
+		} catch (Exception e){
+			if (e instanceof InvocationTargetException){
+				Throwable c = e.getCause();
+				if (c == null) c = e;
+				source.sendMessage(Text.of(TextColors.RED, TextActions.showText(Text.of("Error: " + c)), "An error occoured while trying to execute this command."));
+			} else {
+				source.sendMessage(Text.of(TextColors.RED, TextActions.showText(Text.of("Error: " + e)), "An error occoured while trying to execute this command."));
+			}
+			commandHandler.getLogger().error("An error occoured trying to execute this command!");
+			commandHandler.getLogger().error("Executed: " + method.toString() + " with Args: " + Arrays.toString(cmdParams.toArray()), e);
+		}
+		return CommandResult.empty();
 	}
 	
-	private List<Object> parseArgs(CommandSource source, String args) throws ArgumentException{
-		// TODO
+	private List<Object> parseArgs(CommandSource source, String args) throws ArgumentException{		
+		List<Object> parsedArgs = Lists.newArrayList();
+		Context context = new Context();
+		context.put(CommandSource.class, source);
+		parsedArgs.add(context);
+			
+		for (Parameter param : getParameters()){
+			if (param.isFlag()) continue;
+			
+			ArgumentParser ap = commandHandler.getArgumentParser(param.getType());
+			
+			while (true){
+				while (args.startsWith(" ")) args = args.substring(1);
+				
+				if (args.startsWith("-")){
+					String flag;
+					if (args.indexOf(" ") > 0){
+						flag = args.substring(1, args.indexOf(" "));
+						args = args.substring(args.indexOf(" "));
+					} else {
+						flag = args.substring(1);
+						args = "";
+					}
+
+					if (flags.containsKey(flag)){
+						args = flags.get(flag).parse(source, commandHandler, args);
+					} else throw new ArgumentException(Text.of(TextColors.RED, "'" + flag + "' is not a valid flag for this command."), flag, null, null);
+					continue;
+				}
+				
+				if (args.isEmpty()){
+					if (!param.isOptional()){
+						throw new ArgumentException.NotEnoughArgumentsException(Text.of(TextColors.RED, "Not enough arguments!"), ap, param.getType());
+					}
+					break;
+				}
+				
+				args = param.parse(source, commandHandler, args);
+				break;
+			}
+		}
+		
+		while (!args.isEmpty()){
+			while (args.startsWith(" ")) args = args.substring(1);
+			
+			if (args.startsWith("-")){
+				String flag;
+				if (args.indexOf(" ") > 0){
+					flag = args.substring(1, args.indexOf(" "));
+					args = args.substring(args.indexOf(" "));
+				} else {
+					flag = args.substring(1);
+					args = "";
+				}
+
+				if (flags.containsKey(flag)){
+					args = flags.get(flag).parse(source, commandHandler, args);
+				} else throw new ArgumentException(Text.of(TextColors.RED, "'" + flag + "' is not a valid flag for this command."), flag, null, null);
+				continue;
+			}
+			
+			throw new ArgumentException.TooManyArgumentsException(Text.of(TextColors.RED, "Too many arguments!"), args);
+		}
+		
+		for (Parameter param : getParameters()){
+			parsedArgs.add(param.getValue());
+		}
+		
+		return parsedArgs;
 	}
 	
 	/**
@@ -140,15 +261,15 @@ public class MethodCommand {
 	}
 	
 	public Text getUsage(CommandSource source){
-		if (usage.isPresent()) return Texts.of(TextColors.YELLOW, usage.get());
+		if (usage.isPresent()) return Text.of(TextColors.YELLOW, usage.get());
 		
-		Literal builder = Texts
+		Builder builder = Text
 				.builder("/")
 				.color(TextColors.DARK_GRAY)
 				.append(getUsagePart(source));
 		
 		for (Parameter param : getParameters()){
-			builder.append(Texts.of(" "));
+			builder.append(Text.of(" "));
 			builder.append(param.getUsage(source));
 		}
 		
@@ -156,10 +277,10 @@ public class MethodCommand {
 	}
 	
 	protected Text getUsagePart(CommandSource source){
-		Literal builder = Texts.builder();
+		Builder builder = Text.builder();
 		if (this.parent.isPresent()) builder.append(parent.get().getUsagePart(source));
 		
-		builder.append(Texts
+		builder.append(Text
 				.builder(primary)
 				.color(TextColors.DARK_GRAY)
 				.onClick(TextActions.suggestCommand("/" + MyText.implode(path, " ") + " "))
@@ -167,20 +288,22 @@ public class MethodCommand {
 				.toText()
 			);
 		
+		builder.append(Text.of(" "));
+		
 		return builder.toText();
 	}
 	
 	protected Text getUsageHover(CommandSource source){
-		Literal builder = Texts.builder();
+		Builder builder = Text.builder();
 		
 		for (int i = 0; i < alias.size(); i++){
-			builder.append(Texts.of(TextColors.YELLOW, alias.get(i)));
-			if (i < alias.size() - 1) builder.append(Texts.of(" | "));
+			builder.append(Text.of(TextColors.YELLOW, alias.get(i)));
+			if (i < alias.size() - 1) builder.append(Text.of(" | "));
 		}
 		
 		if (desc.isPresent()){
-			builder.append(Texts.of("\n"));
-			builder.append(Texts.of(TextColors.GRAY, desc.get()));
+			builder.append(Text.of("\n"));
+			builder.append(Text.of(TextColors.GRAY, desc.get()));
 		}
 		
 		return builder.toText();
@@ -306,5 +429,22 @@ public class MethodCommand {
 		if (path.contains(" "))
 			return path.substring(0, path.lastIndexOf(" "));
 		return "";
+	}
+	
+	public List<String> getAliasPaths(){
+		List<String> paths = Lists.newArrayList();
+		if (parent.isPresent()){
+			for (String start : parent.get().getAliasPaths()){
+				for (String end : getAliases()){
+					paths.add(start + " " + end);
+				}
+			}
+		} else {
+			for (String end : getAliases()){
+				paths.add(end);
+			}
+		}
+		
+		return paths;
 	}
 }

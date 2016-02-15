@@ -21,6 +21,6 @@ public interface MethodCommandService {
 	 * Returns the priority highest {@link ArgumentParser} that supports this class-type.
 	 * @throws IllegalArgumentException if the parameter "plugin" is no {@link Plugin}!
 	 */
-	public ArgumentParser getArgumentParser(Object plugin, Class<?> type);
+	public ArgumentParser getArgumentParser(Class<?> type);
 	
 }

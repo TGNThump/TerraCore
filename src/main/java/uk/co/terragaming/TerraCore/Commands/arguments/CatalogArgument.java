@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.annotation.CatalogedBy;
 
 import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException;
@@ -32,7 +34,7 @@ public class CatalogArgument implements ArgumentParser {
 			}
 		}
 		
-		throw new ArgumentException("Expected a " + getArgumentTypeName(type) + ", got '" + arg + "'");
+		throw new ArgumentException(Text.of(TextColors.RED, "Expected a ", TextColors.AQUA, getArgumentTypeName(type), TextColors.RED,  ", got '", TextColors.LIGHT_PURPLE, arg, TextColors.RED, "'"), arg, this, type);
 	}
 	
 	@Override

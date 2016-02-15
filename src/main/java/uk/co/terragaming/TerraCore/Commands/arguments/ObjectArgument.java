@@ -5,9 +5,12 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.List;
 
-import com.google.common.collect.Lists;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException;
+
+import com.google.common.collect.Lists;
 
 
 public class ObjectArgument implements ArgumentParser {
@@ -32,7 +35,7 @@ public class ObjectArgument implements ArgumentParser {
 		try{
 			return type.getConstructor(String.class).newInstance(arg);
 		} catch (Exception ex2){
-			throw new ArgumentException("'" + arg + "' could not be parsed to an instance of " + type.getSimpleName());
+			throw new ArgumentException(Text.of(TextColors.RED, "Expected a ", TextColors.AQUA, getArgumentTypeName(type), TextColors.RED,  ", got '", TextColors.LIGHT_PURPLE, arg, TextColors.RED, "'"), arg, this, type);
 		}
 	}
 	

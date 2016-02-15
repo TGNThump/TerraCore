@@ -1,5 +1,8 @@
 package uk.co.terragaming.TerraCore.Commands.arguments;
 
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
+
 import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException;
 
 
@@ -20,12 +23,12 @@ public class NumberArgument implements ArgumentParser {
 	public <T> T parseArgument(Class<T> type, String arg) throws ArgumentException, IllegalArgumentException {
 		checkTypeSupported(type);
 		
-		if (type == byte.class || type == Byte.class) try { return (T) new Byte(arg); } catch (NumberFormatException ex){ throw new ArgumentException("Expected a small Number (Byte), got '" + arg + "'"); }
-		if (type == short.class || type == Short.class) try { return (T) new Short(arg); } catch (NumberFormatException ex){ throw new ArgumentException("Expected a whole Number (Short), got '" + arg + "'"); }
-		if (type == int.class || type == Integer.class) try { return (T) new Integer(arg); } catch (NumberFormatException ex){ throw new ArgumentException("Expected a whole Number (Integer), got '" + arg + "'"); }
-		if (type == long.class || type == Long.class) try { return (T) new Long(arg); } catch (NumberFormatException ex){ throw new ArgumentException("Expected a whole Number (Long), got '" + arg + "'"); }
-		if (type == float.class || type == Float.class) try { return (T) new Float(arg); } catch (NumberFormatException ex){ throw new ArgumentException("Expected a decimal Number (Float), got '" + arg + "'"); }
-		if (type == double.class || type == Double.class) try { return (T) new Double(arg); } catch (NumberFormatException ex){ throw new ArgumentException("Expected a decimal Number (Double), got '" + arg + "'"); }
+		if (type == byte.class || type == Byte.class) try { return (T) new Byte(arg); } catch (NumberFormatException ex){ throwException(type, arg); }
+		if (type == short.class || type == Short.class) try { return (T) new Short(arg); } catch (NumberFormatException ex){ throwException(type, arg); }
+		if (type == int.class || type == Integer.class) try { return (T) new Integer(arg); } catch (NumberFormatException ex){ throwException(type, arg); }
+		if (type == long.class || type == Long.class) try { return (T) new Long(arg); } catch (NumberFormatException ex){ throwException(type, arg); }
+		if (type == float.class || type == Float.class) try { return (T) new Float(arg); } catch (NumberFormatException ex){ throwException(type, arg); }
+		if (type == double.class || type == Double.class) try { return (T) new Double(arg); } catch (NumberFormatException ex){ throwException(type, arg); }
 		
 		throw new IllegalArgumentException();
 	}
@@ -34,5 +37,9 @@ public class NumberArgument implements ArgumentParser {
 	public String getArgumentTypeName(Class<?> type) throws IllegalArgumentException {
 		checkTypeSupported(type);
 		return "Number (" + type.getSimpleName() + ")";
+	}
+	
+	public <T> void throwException(Class<T> type, String arg) throws ArgumentException, IllegalArgumentException{
+		throw new ArgumentException(Text.of(TextColors.RED, "Expected a ", TextColors.AQUA, getArgumentTypeName(type), TextColors.RED,  ", got '", TextColors.LIGHT_PURPLE, arg, TextColors.RED, "'"), arg, this, type);
 	}
 }

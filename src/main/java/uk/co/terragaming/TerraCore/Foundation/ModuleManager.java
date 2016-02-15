@@ -20,6 +20,15 @@ public class ModuleManager implements Iterable<ModuleContainer>{
 	private HashMap<Class<?>, ModuleContainer> modules = new HashMap<>();
 	private List<ModuleContainer> rootModules = Lists.newArrayList();
 	
+	public void onEnableAll(){
+		for (ModuleContainer container : getModuleContainers()){
+			Object obj = container.get();
+			if (obj == null) continue;
+			if (!(obj instanceof GuiceModule)) continue;
+			((GuiceModule) obj).onEnable();
+		}
+	}
+	
 	public int getEnabledCount(){
 		int ret = 0;
 		

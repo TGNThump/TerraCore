@@ -1,11 +1,14 @@
 package uk.co.terragaming.TerraCraft;
 
+import java.util.Optional;
+
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandManager;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
-import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.text.Text;
 
 import uk.co.terragaming.TerraCore.TerraPlugin;
 import uk.co.terragaming.TerraCore.Commands.Flag;
@@ -33,14 +36,13 @@ public class TestModule extends GuiceModule{
 	@Inject
 	TerraPlugin plugin;
 	
-	@Inject
-	MethodCommandService commandService;
-	
+	//@Inject
+//	MethodCommandService commandService;
 	
 	@Listener
     public void onServerStart(GameStartedServerEvent event) {
-        logger.info("<l>GameStartedServerEvent<r>");        
-    	commandService.registerCommands(plugin, this);
+        logger.info("<l>GameStartedServerEvent<r>");
+        Sponge.getServiceManager().provide(MethodCommandService.class).get().registerCommands(plugin, this);
     }	
 	
 	@Command("character")
@@ -48,7 +50,7 @@ public class TestModule extends GuiceModule{
 	@Perm("character")
 	@Alias("c")
 	public CommandResult onCommand(Context context){
-		context.get(CommandSource.class).sendMessage(Texts.of("character - done"));
+		context.get(CommandSource.class).sendMessage(Text.of("character - done"));
 		return CommandResult.success();
 	}
 	
@@ -58,9 +60,10 @@ public class TestModule extends GuiceModule{
 	@Alias("c") @Alias("new")
 	public CommandResult onCommand2( Context context,
 		@Desc("Force the character creation.") @Perm("character.create.force") @Alias("f") Flag<Boolean> force,
-		@Desc("The new characters name.") String name
+		@Desc("The new characters name.") String name,
+		@Desc("The new characters age.") Optional<Integer> age
 	){
-		context.get(CommandSource.class).sendMessage(Texts.of("character create - done"));
+		context.get(CommandSource.class).sendMessage(Text.of("character create - done"));
 		return CommandResult.success();
 	}
 }

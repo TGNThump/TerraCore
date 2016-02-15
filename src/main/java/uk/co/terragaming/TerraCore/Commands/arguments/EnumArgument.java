@@ -2,9 +2,12 @@ package uk.co.terragaming.TerraCore.Commands.arguments;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException;
+
+import com.google.common.collect.Lists;
 
 
 public class EnumArgument implements ArgumentParser {
@@ -26,7 +29,7 @@ public class EnumArgument implements ArgumentParser {
 			}
 		}
 		
-		throw new ArgumentException("Expected a " + getArgumentTypeName(type) + ", got '" + arg + "'");
+		throw new ArgumentException(Text.of(TextColors.RED, "Expected a ", TextColors.AQUA, getArgumentTypeName(type), TextColors.RED,  ", got '", TextColors.LIGHT_PURPLE, arg, TextColors.RED, "'"), arg, this, type);
 	}
 	
 	@Override

@@ -9,8 +9,7 @@ import java.util.Optional;
 
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.TextBuilder.Literal;
-import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
@@ -18,6 +17,8 @@ import uk.co.terragaming.TerraCore.Commands.annotations.Alias;
 import uk.co.terragaming.TerraCore.Commands.annotations.Default;
 import uk.co.terragaming.TerraCore.Commands.annotations.Desc;
 import uk.co.terragaming.TerraCore.Commands.annotations.Perm;
+import uk.co.terragaming.TerraCore.Commands.arguments.ArgumentParser;
+import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException;
 
 import com.google.common.collect.Lists;
 
@@ -40,6 +41,37 @@ public class Parameter {
 	private boolean isOptional = false;
 	private boolean isVarArgs = false;
 	private boolean valid = true;
+	
+	private Object value = defaultValue.orElse(null);
+	
+	public String parse(CommandSource source, CommandHandler handler, String args) throws ArgumentException{
+		if (isFlag() && isBoolean()){
+			value = true;
+			return args;
+		}
+		
+		if (isVarArgs()){
+			
+		}
+		
+		ArgumentParser ap = handler.getArgumentParser(type);
+		if (ap.getArgumentEnd(args) > 0){
+			value = ap.parseArgument(type, args.substring(0, ap.getArgumentEnd(args)));
+			return args.substring(ap.getArgumentEnd(args));
+		} else {
+			value = ap.parseArgument(type, args);
+			return "";
+		}
+		
+		
+		
+	}
+	
+	public Object getValue(){
+		if (isFlag()) return Flag.ofNullable(value);
+		if (isOptional()) return Optional.ofNullable(value);
+		return value;
+	}
 	
 	public Parameter(MethodCommand method, java.lang.reflect.Parameter parameter){
 		checkNotNull(method, "method");
@@ -88,7 +120,7 @@ public class Parameter {
 	
 	public Text getUsage(CommandSource source){
 		if (isOptional()){
-			Literal builder = Texts.builder("[" + getPrimary() + (defaultValue.isPresent() ? "=" + defaultValue.get() : "") + "]" + (isVarArgs() ? "..." : ""));
+			Builder builder = Text.builder("[" + getPrimary() + (defaultValue.isPresent() ? "=" + defaultValue.get() : "") + "]" + (isVarArgs() ? "..." : ""));
 			builder.color(TextColors.AQUA);
 			builder.onHover(TextActions.showText(getHoverText(source)));
 			return builder.toText();
@@ -100,7 +132,7 @@ public class Parameter {
 					if (i < alias.size() - 1) text += " | ";
 				}
 				text += "]";
-				Literal builder = Texts.builder(text);
+				Builder builder = Text.builder(text);
 				builder.color(TextColors.AQUA);
 				builder.onHover(TextActions.showText(getHoverText(source)));
 				return builder.toText();
@@ -111,13 +143,13 @@ public class Parameter {
 					if (i < alias.size() - 1) text += " | ";
 				}
 				text += "]";
-				Literal builder = Texts.builder(text);
+				Builder builder = Text.builder(text);
 				builder.color(TextColors.AQUA);
 				builder.onHover(TextActions.showText(getHoverText(source)));
 				return builder.toText();
 			}
 		} else {
-			Literal builder = Texts.builder("<" + getPrimary() + ">" + (isVarArgs() ? "..." : ""));
+			Builder builder = Text.builder("<" + getPrimary() + ">" + (isVarArgs() ? "..." : ""));
 			builder.color(TextColors.GREEN);
 			builder.onHover(TextActions.showText(getHoverText(source)));
 			return builder.toText();
@@ -125,17 +157,17 @@ public class Parameter {
 	}
 	
 	private Text getHoverText(CommandSource source){
-		Literal builder = Texts.builder();
+		Builder builder = Text.builder();
 		
 		builder.append(
-			Texts.of(TextColors.AQUA, type.getSimpleName()),
-			Texts.of(" | "),
-			Texts.of(TextColors.AQUA, (isOptional()? "Optional" : (isFlag() ? "Flag" : "Required"))),
-			Texts.of("\n")
+			Text.of(TextColors.AQUA, type.getSimpleName()),
+			Text.of(" | "),
+			Text.of(TextColors.AQUA, (isOptional()? "Optional" : (isFlag() ? "Flag" : "Required"))),
+			Text.of("\n")
 		);
 		
 		if (desc.isPresent()){
-			builder.append(Texts.of(TextColors.GRAY, desc.get()));
+			builder.append(Text.of(TextColors.GRAY, desc.get()));
 		}
 		
 		if (!perms.isEmpty()){
@@ -149,8 +181,8 @@ public class Parameter {
 			}
 			
 			builder.append(
-				Texts.of("\n\n"),
-				Texts.of(perm ? TextColors.GREEN : TextColors.RED, "Requires Permission")
+				Text.of("\n\n"),
+				Text.of(perm ? TextColors.GREEN : TextColors.RED, "Requires Permission")
 			);
 		}
 		
