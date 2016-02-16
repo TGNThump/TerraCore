@@ -19,6 +19,7 @@ import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
+import uk.co.terragaming.TerraCore.TerraPlugin;
 import uk.co.terragaming.TerraCore.Commands.annotations.Alias;
 import uk.co.terragaming.TerraCore.Commands.annotations.Command;
 import uk.co.terragaming.TerraCore.Commands.annotations.Desc;
@@ -175,8 +176,8 @@ public class MethodCommand {
 			} else {
 				source.sendMessage(Text.of(TextColors.RED, TextActions.showText(Text.of("Error: " + e)), "An error occoured while trying to execute this command."));
 			}
-			commandHandler.getLogger().error("An error occoured trying to execute this command!");
-			commandHandler.getLogger().error("Executed: " + method.toString() + " with Args: " + Arrays.toString(cmdParams.toArray()), e);
+			TerraPlugin.instance.logger.error("An error occoured trying to execute this command!");
+			TerraPlugin.instance.logger.error("Executed: " + method.toString() + " with Args: " + Arrays.toString(cmdParams.toArray()), e);
 		}
 		return CommandResult.empty();
 	}
@@ -219,7 +220,7 @@ public class MethodCommand {
 				}
 				
 				args = param.parse(source, args);
-				break;
+				if (!param.isVarArgs()) break;
 			}
 		}
 		

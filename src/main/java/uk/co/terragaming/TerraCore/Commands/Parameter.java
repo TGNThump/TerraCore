@@ -3,6 +3,7 @@ package uk.co.terragaming.TerraCore.Commands;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static uk.co.terragaming.TerraCore.Util.Conditions.notNull;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Optional;
@@ -45,6 +46,7 @@ public class Parameter {
 	
 	private Object value = defaultValue.orElse(null);
 	
+	@SuppressWarnings("unchecked")
 	public String parse(CommandSource source, String args) throws ArgumentException{
 		if (isFlag() && isBoolean()){
 			value = true;
@@ -52,7 +54,20 @@ public class Parameter {
 		}
 		
 		if (isVarArgs()){
+			if (args.toLowerCase().startsWith("@a")){
+				for (String arg : ap.getAllSuggestions(type, "")){
+					((List<Object>) value).add(ap.parseArgument(type, arg));
+				}
+				return args.substring(2);
+			}
 			
+			if (ap.getArgumentEnd(args) > 0){
+				((List<Object>) value).add(ap.parseArgument(type, args.substring(0, ap.getArgumentEnd(args))));
+				return args.substring(ap.getArgumentEnd(args));
+			} else {
+				((List<Object>) value).add(ap.parseArgument(type, args));
+				return "";
+			}
 		}
 		
 		if (ap.getArgumentEnd(args) > 0){
@@ -64,8 +79,19 @@ public class Parameter {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Object getValue(){
 		if (isFlag()) return Flag.ofNullable(value);
+		
+		if (isVarArgs()){
+			List<Object> list = ((List<Object>) value);
+			Object array = Array.newInstance(type, list.size());
+			for (int i = 0; i < list.size(); i++){
+				Array.set(array, i, list.get(i));
+			}
+			return array;
+		}
+
 		if (isOptional()) return Optional.ofNullable(value);
 		return value;
 	}
@@ -85,6 +111,11 @@ public class Parameter {
 		this.type = parameter.getType();
 		
 		this.isVarArgs = parameter.isVarArgs();
+		
+		if (this.isVarArgs){
+			this.type = parameter.getType().getComponentType();
+			this.value = Lists.newArrayList();
+		}
 		
 		if (this.type.isAssignableFrom(Optional.class)){
 			this.isOptional = true;
@@ -159,7 +190,7 @@ public class Parameter {
 		Builder builder = Text.builder();
 		
 		builder.append(
-			Text.of(TextColors.AQUA, type.getSimpleName()),
+			Text.of(TextColors.AQUA, type.getSimpleName()+ (isVarArgs() ? "..." : "")),
 			Text.of(" | "),
 			Text.of(TextColors.AQUA, (isOptional()? "Optional" : (isFlag() ? "Flag" : "Required"))),
 			Text.of("\n")
@@ -223,7 +254,7 @@ public class Parameter {
 	}
 	
 	public boolean isOptional(){
-		return isOptional;
+		return (isOptional || isVarArgs());
 	}
 	
 	public boolean isVarArgs(){
