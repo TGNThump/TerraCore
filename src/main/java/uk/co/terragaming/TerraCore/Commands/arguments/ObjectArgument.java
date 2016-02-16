@@ -40,7 +40,7 @@ public class ObjectArgument implements ArgumentParser {
 	}
 	
 	@Override
-	public List<String> suggestArguments(Class<?> type, String prefix) throws IllegalArgumentException {
+	public List<String> getAllSuggestions(Class<?> type, String prefix) throws IllegalArgumentException {
 		checkTypeSupported(type);
 	
 		List<String> suggestions = Lists.newArrayList();

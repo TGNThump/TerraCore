@@ -20,12 +20,6 @@ public class StringArgument implements ArgumentParser{
 	}
 	
 	@Override
-	public String getArgumentTypeName(Class<?> type) throws IllegalArgumentException {
-		checkTypeSupported(type);
-		return "Text";
-	}
-	
-	@Override
 	public int getArgumentEnd(String arguments){
 		if (arguments.startsWith("'")) return arguments.indexOf("'");
 		if (arguments.startsWith("\"")) return arguments.indexOf("\"");

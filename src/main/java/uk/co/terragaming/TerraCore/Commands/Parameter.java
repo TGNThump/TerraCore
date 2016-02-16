@@ -29,6 +29,7 @@ public class Parameter {
 	
 	private final java.lang.reflect.Parameter parameter;
 	private final MethodCommand method;
+	private final ArgumentParser ap;
 	
 	private String primary;
 	private Class<?> type;
@@ -44,7 +45,7 @@ public class Parameter {
 	
 	private Object value = defaultValue.orElse(null);
 	
-	public String parse(CommandSource source, CommandHandler handler, String args) throws ArgumentException{
+	public String parse(CommandSource source, String args) throws ArgumentException{
 		if (isFlag() && isBoolean()){
 			value = true;
 			return args;
@@ -54,7 +55,6 @@ public class Parameter {
 			
 		}
 		
-		ArgumentParser ap = handler.getArgumentParser(type);
 		if (ap.getArgumentEnd(args) > 0){
 			value = ap.parseArgument(type, args.substring(0, ap.getArgumentEnd(args)));
 			return args.substring(ap.getArgumentEnd(args));
@@ -62,9 +62,6 @@ public class Parameter {
 			value = ap.parseArgument(type, args);
 			return "";
 		}
-		
-		
-		
 	}
 	
 	public Object getValue(){
@@ -73,7 +70,7 @@ public class Parameter {
 		return value;
 	}
 	
-	public Parameter(MethodCommand method, java.lang.reflect.Parameter parameter){
+	public Parameter(MethodCommand method, CommandHandler handler, java.lang.reflect.Parameter parameter){
 		checkNotNull(method, "method");
 		checkNotNull(parameter, "parameter");
 		this.method = method;
@@ -116,6 +113,8 @@ public class Parameter {
 		if (isFlag && isVarArgs) valid = false;
 	
 		this.alias.add(primary);
+		
+		this.ap = handler.getArgumentParser(this.type);
 	}
 	
 	public Text getUsage(CommandSource source){
@@ -170,6 +169,12 @@ public class Parameter {
 			builder.append(Text.of(TextColors.GRAY, desc.get()));
 		}
 		
+		Text suggestions = ap.getSuggestionText(type, "");
+		
+		if (!perms.isEmpty() || !suggestions.isEmpty()){
+			builder.append(Text.of("\n\n"));
+		}
+		
 		if (!perms.isEmpty()){
 			
 			boolean perm = false;
@@ -181,9 +186,13 @@ public class Parameter {
 			}
 			
 			builder.append(
-				Text.of("\n\n"),
 				Text.of(perm ? TextColors.GREEN : TextColors.RED, "Requires Permission")
 			);
+		}
+		
+		if (!suggestions.isEmpty()){
+			builder.append(Text.of(TextColors.WHITE, "e.g. "));
+			builder.append(suggestions);
 		}
 		
 		return builder.toText();

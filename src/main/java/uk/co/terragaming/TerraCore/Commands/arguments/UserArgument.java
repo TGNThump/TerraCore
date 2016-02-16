@@ -8,7 +8,6 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 
 import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException;
 
@@ -34,11 +33,11 @@ public class UserArgument implements ArgumentParser {
 			return (T) u.get();
 		}
 		
-		throw new ArgumentException(Text.of(TextColors.RED, "Expected a ", TextColors.AQUA, getArgumentTypeName(type), TextColors.RED,  ", got '", TextColors.LIGHT_PURPLE, arg, TextColors.RED, "'"), arg, this, type);
+		throw getArgumentException(type, arg);
 	}
 	
 	@Override
-	public List<String> suggestArguments(Class<?> type, String prefix) throws IllegalArgumentException {
+	public List<String> getAllSuggestions(Class<?> type, String prefix) throws IllegalArgumentException {
 		checkTypeSupported(type);
 		
 		List<String> suggestions = Lists.newArrayList();
@@ -47,6 +46,11 @@ public class UserArgument implements ArgumentParser {
 		}
 		
 		return suggestions;
+	}
+	
+	@Override
+	public Text getSuggestionText(Class<?> type, String prefix) throws IllegalArgumentException {
+		return Text.EMPTY;
 	}
 	
 	@Override

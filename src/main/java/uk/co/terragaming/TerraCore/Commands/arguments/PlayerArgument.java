@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 
 import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException;
 
@@ -26,12 +25,12 @@ public class PlayerArgument implements ArgumentParser {
 		checkTypeSupported(type);
 		
 		Optional<Player> player = Sponge.getGame().getServer().getPlayer(arg);
-		if (!player.isPresent()) throw new ArgumentException(Text.of(TextColors.RED, "Expected a ", TextColors.AQUA, getArgumentTypeName(type), TextColors.RED,  ", got '", TextColors.LIGHT_PURPLE, arg, TextColors.RED, "'"), arg, this, type);
+		if (!player.isPresent()) throw getArgumentException(type, arg);
 		return (T) player.get();
 	}
 	
 	@Override
-	public List<String> suggestArguments(Class<?> type, String prefix) throws IllegalArgumentException {
+	public List<String> getAllSuggestions(Class<?> type, String prefix) throws IllegalArgumentException {
 		checkTypeSupported(type);
 		
 		List<String> suggestions = Lists.newArrayList();
@@ -40,6 +39,11 @@ public class PlayerArgument implements ArgumentParser {
 		}
 		
 		return suggestions;
+	}
+	
+	@Override
+	public Text getSuggestionText(Class<?> type, String prefix) throws IllegalArgumentException {
+		return Text.EMPTY;
 	}
 	
 	@Override

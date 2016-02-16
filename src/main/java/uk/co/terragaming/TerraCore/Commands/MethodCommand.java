@@ -109,7 +109,7 @@ public class MethodCommand {
 		
 		for (java.lang.reflect.Parameter param : method.getParameters()){
 			if (param.getType().isAssignableFrom(Context.class)) continue;
-			Parameter parameter = new Parameter(this, param);
+			Parameter parameter = new Parameter(this, commandHandler, param);
 			
 			if (!parameter.isValid()) throw new IllegalArgumentException();
 			
@@ -132,11 +132,11 @@ public class MethodCommand {
 			while (e != null){
 				if (e instanceof ArgumentException.NotEnoughArgumentsException){
 					ArgumentParser ap = commandHandler.getArgumentParser(e.getExpectedType());
-					if (args.endsWith(" ") || args.isEmpty()) suggestions.addAll(ap.suggestArguments(e.getExpectedType(), ""));
+					if (args.endsWith(" ") || args.isEmpty()) suggestions.addAll(ap.suggestArgs(e.getExpectedType(), ""));
 				} else if (e instanceof ArgumentException.TooManyArgumentsException){
 				} else {
 					ArgumentParser ap = commandHandler.getArgumentParser(e.getExpectedType());
-					for (String s : ap.suggestArguments(e.getExpectedType(), e.getWrongArgument())){
+					for (String s : ap.suggestArgs(e.getExpectedType(), e.getWrongArgument())){
 						suggestions.add(s);
 					}
 				}
@@ -206,7 +206,7 @@ public class MethodCommand {
 					}
 
 					if (flags.containsKey(flag)){
-						args = flags.get(flag).parse(source, commandHandler, args);
+						args = flags.get(flag).parse(source, args);
 					} else throw new ArgumentException(Text.of(TextColors.RED, "'" + flag + "' is not a valid flag for this command."), flag, null, null);
 					continue;
 				}
@@ -218,7 +218,7 @@ public class MethodCommand {
 					break;
 				}
 				
-				args = param.parse(source, commandHandler, args);
+				args = param.parse(source, args);
 				break;
 			}
 		}
@@ -237,7 +237,7 @@ public class MethodCommand {
 				}
 
 				if (flags.containsKey(flag)){
-					args = flags.get(flag).parse(source, commandHandler, args);
+					args = flags.get(flag).parse(source, args);
 				} else throw new ArgumentException(Text.of(TextColors.RED, "'" + flag + "' is not a valid flag for this command."), flag, null, null);
 				continue;
 			}
@@ -268,8 +268,10 @@ public class MethodCommand {
 				.color(TextColors.DARK_GRAY)
 				.append(getUsagePart(source));
 		
+		boolean first = true;
 		for (Parameter param : getParameters()){
-			builder.append(Text.of(" "));
+			if (first) first = false;
+			else builder.append(Text.of(" "));
 			builder.append(param.getUsage(source));
 		}
 		

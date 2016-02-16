@@ -18,15 +18,15 @@ public class CommandModule extends GuiceModule{
 	
 	private CommandHandler commandHandler;
 	
-	@Override
-	public void onEnable() {
-		commandHandler = new CommandHandler(plugin);
-		Sponge.getServiceManager().setProvider(plugin, MethodCommandService.class, commandHandler);
-		Sponge.getEventManager().registerListeners(plugin, commandHandler);
-	}
-	
 	@Provides
-	MethodCommandService getCommandHandler(){
+	MethodCommandService getCommandHandler(TerraPlugin plugin){
+		if (commandHandler == null){
+			
+			commandHandler = new CommandHandler(plugin);
+			Sponge.getServiceManager().setProvider(plugin, MethodCommandService.class, commandHandler);
+			Sponge.getEventManager().registerListeners(plugin, commandHandler);
+			
+		}
 		return commandHandler;
 	}
 	

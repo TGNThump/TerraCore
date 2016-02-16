@@ -29,6 +29,7 @@ import uk.co.terragaming.TerraCore.Commands.arguments.BooleanArgument;
 import uk.co.terragaming.TerraCore.Commands.arguments.CatalogArgument;
 import uk.co.terragaming.TerraCore.Commands.arguments.CharArgument;
 import uk.co.terragaming.TerraCore.Commands.arguments.EnumArgument;
+import uk.co.terragaming.TerraCore.Commands.arguments.GamemodeArgument;
 import uk.co.terragaming.TerraCore.Commands.arguments.NumberArgument;
 import uk.co.terragaming.TerraCore.Commands.arguments.ObjectArgument;
 import uk.co.terragaming.TerraCore.Commands.arguments.PlayerArgument;
@@ -72,6 +73,7 @@ public class CommandHandler implements MethodCommandService {
 		addArgumentParser(plugin, new StringArgument());
 		addArgumentParser(plugin, new UserArgument());
 		addArgumentParser(plugin, new PlayerArgument());
+		addArgumentParser(plugin, new GamemodeArgument());
 	}
 	
 	public MethodCommand getCommand(String path){
@@ -212,7 +214,7 @@ public class CommandHandler implements MethodCommandService {
 			
 			// create error description
 			Builder tb = Text.builder();
-			tb.append(Text.of(TextColors.GRAY, "--------------", "\n"));
+			tb.append(Text.of("\n"));
 			
 			if (tooManyArgs != null){
 				tb.append(tooManyArgs.getDescription());
@@ -232,7 +234,7 @@ public class CommandHandler implements MethodCommandService {
 					if (first) first = false;
 					else tb.append(Text.of(TextColors.WHITE, ", "));
 					ArgumentParser ap = ex.getParser();
-					if (ap != null) tb.append(Text.of(TextColors.GRAY, TextActions.showText(ap.getArgumentTypeDescription(ex.getExpectedType())), ap.getArgumentTypeName(ex.getExpectedType())));
+					if (ap != null) tb.append(Text.of(TextColors.GRAY, ap.getArgumentTypeName(ex.getExpectedType())));
 				}
 				if (!invalidArgs.isEmpty()) tb.append(Text.of("\n", TextColors.WHITE, "or "));
 			}
@@ -252,7 +254,7 @@ public class CommandHandler implements MethodCommandService {
 							else tb.append(Text.of(TextColors.WHITE, ", "));
 							
 							ArgumentParser ap = ex.getParser();
-							if (ap != null) tb.append(Text.of(TextColors.GRAY, TextActions.showText(ap.getArgumentTypeDescription(ex.getExpectedType())), ap.getArgumentTypeName(ex.getExpectedType())));
+							if (ap != null) tb.append(Text.of(TextColors.GRAY, ap.getArgumentTypeName(ex.getExpectedType())));
 						}
 					} else {
 						tb.append(exList.get(0).getDescription());
@@ -261,12 +263,7 @@ public class CommandHandler implements MethodCommandService {
 			}
 			
 			tb.append(Text.of("\n"));
-			tb.append(Text.of(TextColors.GRAY, "--------------"));
-			tb.append(Text.of("\n"));
-			
 			if (!usages.isEmpty()){
-				if (usages.size() > 1) tb.append(Text.of(TextColors.RED, "Possible usages are:", Text.of("\n")));
-				else tb.append(Text.of(TextColors.RED, "A possible usage is:"), Text.of("\n"));
 				tb.append(Text.joinWith(Text.of("\n"), usages.toArray(new Text[usages.size()])));
 			} else {
 				tb.append(exceptions.get(0).getDescription(), Text.of("\n"));

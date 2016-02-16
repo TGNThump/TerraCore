@@ -38,9 +38,25 @@ public interface ArgumentParser {
 	 * Suggests some arguments that could be used with parseArgument()
 	 * @throws IllegalArgumentException If the type is not supported by this parser. <i>({@link #isTypeSupported(Class)} returns <code>false</code> for this type)</i>
 	 */
-	public default List<String> suggestArguments(Class<?> type, String prefix) throws IllegalArgumentException {
+	public default List<String> getAllSuggestions(Class<?> type, String prefix) throws IllegalArgumentException {
 		checkTypeSupported(type);
 		return Lists.newArrayList();
+	}
+	
+	/**
+	 * Suggests some arguments that could be used with parseArgument()
+	 * @throws IllegalArgumentException If the type is not supported by this parser. <i>({@link #isTypeSupported(Class)} returns <code>false</code> for this type)</i>
+	 */
+	public default List<String> suggestArgs(Class<?> type, String prefix) throws IllegalArgumentException {
+		List<String> ret = Lists.newArrayList();
+		for (String sugg : getAllSuggestions(type, prefix)){
+			if (sugg.startsWith(prefix)) ret.add(sugg);
+		}
+		return ret;
+	}
+	
+	default <T> ArgumentException getArgumentException(Class<T> type, String arg) throws ArgumentException, IllegalArgumentException{
+		return new ArgumentException(Text.of(TextColors.RED, "Expected a ", TextColors.GRAY, getArgumentTypeName(type), TextColors.RED,  ", got ", TextColors.YELLOW, arg, TextColors.RED, "."), arg, this, type);
 	}
 	
 	/**
@@ -56,25 +72,6 @@ public interface ArgumentParser {
 	}
 	
 	/**
-	 * This method provides a description used to explain this argument-type.
-	 * @throws IllegalArgumentException If the type is not supported by this parser. <i>({@link #isTypeSupported(Class)} returns <code>false</code> for this type)</i>
-	 */
-	public default Text getArgumentTypeDescription(Class<?> type) throws IllegalArgumentException {
-		checkTypeSupported(type);
-		
-		Text suggs = getSuggestionText(type, "");
-		if (suggs.equals(Text.of())) 
-			return Text.of(
-					TextColors.GREEN, "Type: ", TextColors.WHITE, getArgumentTypeName(type)
-					);
-		else 
-			return Text.of(
-					TextColors.GREEN, "Type: ", TextColors.WHITE, getArgumentTypeName(type), "\n",
-					getSuggestionText(type, "")
-					);
-	}
-	
-	/**
 	 * Returns a nice formatted {@link Text} with some suggestions.
 	 * Returns an empty {@link Text} if there are no suggestions.
 	 * @throws IllegalArgumentException If the type is not supported by this parser. <i>({@link #isTypeSupported(Class)} returns <code>false</code> for this type)</i>
@@ -84,7 +81,7 @@ public interface ArgumentParser {
 		
 		Builder tb = Text.builder();
 		
-		List<String> suggs = suggestArguments(type, prefix);
+		List<String> suggs = getAllSuggestions(type, prefix);
 		if (suggs.isEmpty()) return Text.of();
 		
 		for (int i = 0; i < suggs.size(); i++){
@@ -93,7 +90,7 @@ public interface ArgumentParser {
 				break;
 			}
 			
-			if (i != 0) tb.append(Text.of(TextColors.WHITE, ", "));
+			if (i != 0 && i < 4) tb.append(Text.of(TextColors.WHITE, ", "));
 			tb.append(Text.of(TextColors.GRAY, suggs.get(i)));
 		}
 		

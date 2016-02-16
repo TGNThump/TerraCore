@@ -2,7 +2,6 @@ package uk.co.terragaming.TerraCraft;
 
 import java.util.Optional;
 
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandManager;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -36,13 +35,13 @@ public class TestModule extends GuiceModule{
 	@Inject
 	TerraPlugin plugin;
 	
-	//@Inject
-//	MethodCommandService commandService;
+	@Inject
+	MethodCommandService commandService;
 	
 	@Listener
     public void onServerStart(GameStartedServerEvent event) {
         logger.info("<l>GameStartedServerEvent<r>");
-        Sponge.getServiceManager().provide(MethodCommandService.class).get().registerCommands(plugin, this);
+        commandService.registerCommands(plugin, this);
     }	
 	
 	@Command("character")

@@ -1,8 +1,5 @@
 package uk.co.terragaming.TerraCore.Commands.arguments;
 
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
-
 import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException;
 
 
@@ -22,7 +19,7 @@ public class CharArgument implements ArgumentParser {
 			return (T) new Character(arg.charAt(0));
 		}
 		
-		throw new ArgumentException(Text.of(TextColors.RED, "Expected a ", TextColors.AQUA, getArgumentTypeName(type), TextColors.RED,  ", got '", TextColors.LIGHT_PURPLE, arg, TextColors.RED, "'"), arg, this, type);
+		throw getArgumentException(type, arg);
 	}
 	
 	@Override
