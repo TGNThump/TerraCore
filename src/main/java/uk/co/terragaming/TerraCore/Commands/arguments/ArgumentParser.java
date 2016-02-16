@@ -49,8 +49,10 @@ public interface ArgumentParser {
 	 */
 	public default List<String> suggestArgs(Class<?> type, String prefix) throws IllegalArgumentException {
 		List<String> ret = Lists.newArrayList();
+		if (prefix.isEmpty()) return getAllSuggestions(type, prefix);
+		prefix = prefix.toLowerCase();
 		for (String sugg : getAllSuggestions(type, prefix)){
-			if (sugg.startsWith(prefix)) ret.add(sugg);
+			if (sugg.toLowerCase().startsWith(prefix)) ret.add(sugg);
 		}
 		return ret;
 	}

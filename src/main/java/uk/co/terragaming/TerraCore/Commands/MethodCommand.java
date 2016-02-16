@@ -144,6 +144,8 @@ public class MethodCommand {
 				
 				e = e.getAnother();
 			}
+		} finally {
+			params.forEach(p -> {p.resetValue();});
 		}
 		
 		if (suggestions.size() > 20) suggestions.subList(20, suggestions.size()).clear();
@@ -152,7 +154,14 @@ public class MethodCommand {
 	}
 	
 	public CommandResult execute(CommandSource source, String args) throws ArgumentException{
-		List<Object> cmdParams = parseArgs(source, args);
+		List<Object> cmdParams;
+		try {
+			cmdParams = parseArgs(source, args);
+			params.forEach(p -> {p.resetValue();});
+		} catch (ArgumentException ex) {
+			params.forEach(p -> {p.resetValue();});
+			throw ex;
+		}
 		
 		boolean p = false;
 		for (String perm : getPerms()){

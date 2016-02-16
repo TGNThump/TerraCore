@@ -1,6 +1,5 @@
 package uk.co.terragaming.TerraCore.Commands.exceptions;
 
-import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 

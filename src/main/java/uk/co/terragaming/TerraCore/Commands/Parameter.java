@@ -80,7 +80,7 @@ public class Parameter {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Object getValue(){
+	public Object getValue(){		
 		if (isFlag()) return Flag.ofNullable(value);
 		
 		if (isVarArgs()){
@@ -89,11 +89,19 @@ public class Parameter {
 			for (int i = 0; i < list.size(); i++){
 				Array.set(array, i, list.get(i));
 			}
+			value = Lists.newArrayList();
 			return array;
 		}
 
 		if (isOptional()) return Optional.ofNullable(value);
 		return value;
+	}
+	
+	public void resetValue(){
+		this.value = defaultValue.orElse(null);
+		if (isVarArgs()){
+			this.value = Lists.newArrayList();
+		}
 	}
 	
 	public Parameter(MethodCommand method, CommandHandler handler, java.lang.reflect.Parameter parameter){

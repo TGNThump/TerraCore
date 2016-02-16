@@ -110,22 +110,24 @@ public class TerraLogger implements org.slf4j.Logger {
 	
 	@Override
 	public void debug(String format, Object arg) {
-		
+		base.trace(MyText.of(true, prefix + debug + format + reset, arg));
 	}
 	
 	@Override
 	public void debug(String format, Object arg1, Object arg2) {
-		
+		base.trace(MyText.of(true, prefix + debug + format + reset, arg1, arg2));
+
 	}
 	
 	@Override
 	public void debug(String format, Object... arguments) {
-		
+		base.trace(MyText.of(true, prefix + debug + format + reset, arguments));
+
 	}
 	
 	@Override
 	public void debug(String msg, Throwable t) {
-		
+		base.trace(MyText.of(true, prefix + debug + msg + reset), t);
 	}
 	
 	@Override
