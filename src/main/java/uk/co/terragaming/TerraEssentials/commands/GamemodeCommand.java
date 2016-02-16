@@ -53,7 +53,7 @@ public class GamemodeCommand {
 					}
 				} else if (player.hasPermission("tc.core.gamemode.others")){
 					if (player.offer(Keys.GAME_MODE, gamemode).isSuccessful()){
-						source.sendMessage(Text.of(TextColors.AQUA, "Set ", TextColors.YELLOW, player.getName(), TextColors.AQUA, " gamemode to ", TextColors.YELLOW, gamemode.getName(), TextColors.AQUA, "."));
+						source.sendMessage(Text.of(TextColors.AQUA, "Set ", TextColors.YELLOW, player.getName(), TextColors.AQUA, "s gamemode to ", TextColors.YELLOW, gamemode.getName(), TextColors.AQUA, "."));
 						player.sendMessage(Text.of(TextColors.YELLOW, source.getName(), TextColors.AQUA, TextColors.AQUA, " set your gamemode to ", TextColors.YELLOW, gamemode.getName(), TextColors.AQUA, "."));
 					} else {
 						throw new CommandException("Could not set players gamemode.");

@@ -25,16 +25,7 @@ import org.spongepowered.api.text.format.TextColors;
 import uk.co.terragaming.TerraCore.TerraPlugin;
 import uk.co.terragaming.TerraCore.Commands.annotations.Command;
 import uk.co.terragaming.TerraCore.Commands.arguments.ArgumentParser;
-import uk.co.terragaming.TerraCore.Commands.arguments.BooleanArgument;
-import uk.co.terragaming.TerraCore.Commands.arguments.CatalogArgument;
-import uk.co.terragaming.TerraCore.Commands.arguments.CharArgument;
-import uk.co.terragaming.TerraCore.Commands.arguments.EnumArgument;
-import uk.co.terragaming.TerraCore.Commands.arguments.GamemodeArgument;
-import uk.co.terragaming.TerraCore.Commands.arguments.NumberArgument;
 import uk.co.terragaming.TerraCore.Commands.arguments.ObjectArgument;
-import uk.co.terragaming.TerraCore.Commands.arguments.PlayerArgument;
-import uk.co.terragaming.TerraCore.Commands.arguments.StringArgument;
-import uk.co.terragaming.TerraCore.Commands.arguments.UserArgument;
 import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException;
 import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException.NotEnoughArgumentsException;
 import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException.TooManyArgumentsException;
@@ -64,16 +55,6 @@ public class CommandHandler implements MethodCommandService {
 		rootLabels = new HashSet<String>();
 		
 		argumentParsers = Lists.newArrayList();
-		
-		addArgumentParser(plugin, new EnumArgument());
-		addArgumentParser(plugin, new CatalogArgument());
-		addArgumentParser(plugin, new BooleanArgument());
-		addArgumentParser(plugin, new CharArgument());
-		addArgumentParser(plugin, new NumberArgument());
-		addArgumentParser(plugin, new StringArgument());
-		addArgumentParser(plugin, new UserArgument());
-		addArgumentParser(plugin, new PlayerArgument());
-		addArgumentParser(plugin, new GamemodeArgument());
 	}
 	
 	public MethodCommand getCommand(String path){
@@ -109,7 +90,7 @@ public class CommandHandler implements MethodCommandService {
 			}
 			
 			for (String alias : command.getAliases()){			
-				if (!command.hasParent()){
+				if (!command.hasParent() && !rootLabels.contains(alias)){
 					Sponge.getCommandManager().register(plugin, new SpongeCommandImpl(alias, this), alias);
 					rootLabels.add(alias);
 				}
@@ -344,6 +325,8 @@ public class CommandHandler implements MethodCommandService {
 		if (!cmdSet.isEmpty()){
 			for (String label : cmdSet){
 				MethodCommand mc = commands.get(label);
+				if (mc == null || mc.equals(null)) continue;
+				if (mc.getPerms() == null) continue;
 				for (String perm : mc.getPerms()){
 					if (source.hasPermission(perm)) return true;
 				}
