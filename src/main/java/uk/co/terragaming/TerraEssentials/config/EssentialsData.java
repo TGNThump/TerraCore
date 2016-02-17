@@ -1,5 +1,7 @@
 package uk.co.terragaming.TerraEssentials.config;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,19 +30,25 @@ public class EssentialsData extends ConfigBase{
 		
 		Vector3i spawnPos = world.getSpawnPosition();
 		
-		spawn = setDefault(spawn, new SpawnCategory());
+		spawn = setDefault(spawn, new WorldLocation());
 		
 		spawn.x = setDefault(spawn.x, (double) spawnPos.getX());
 		spawn.y = setDefault(spawn.y, (double) spawnPos.getY());
 		spawn.z = setDefault(spawn.z, (double) spawnPos.getZ());
 		spawn.worldUUID = setDefault(spawn.worldUUID, world.getUniqueId());
+		
+		homes = setDefault(homes, new HashMap<UUID, WorldLocation>());
 	}
 	
 	@Setting
-	public SpawnCategory spawn;
+	public WorldLocation spawn;
+	
+	
+	@Setting
+	public Map<UUID, WorldLocation> homes;
 	
 	@ConfigSerializable
-	public static class SpawnCategory extends ConfigBase.Category{
+	public static class WorldLocation extends ConfigBase.Category{
 		
 		@Setting
 		public Double x;
@@ -54,14 +62,20 @@ public class EssentialsData extends ConfigBase{
 		@Setting("world-uuid")
 		public UUID worldUUID;
 		
-		public void setLocation(Location<World> loc){
+		public WorldLocation(){}
+		
+		public WorldLocation(Location<World> loc){
+			set(loc);
+		}
+		
+		public void set(Location<World> loc){
 			this.x = loc.getX();
 			this.y = loc.getY();
 			this.z = loc.getZ();
 			this.worldUUID = loc.getExtent().getUniqueId();
 		}
 		
-		public Location<World> getLocation(){
+		public Location<World> get(){
 			Optional<World> world = Sponge.getServer().getWorld(worldUUID);
 			if (world.isPresent()){
 				return new Location<World>(world.get(), x, y, z);

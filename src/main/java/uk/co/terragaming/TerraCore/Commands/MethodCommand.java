@@ -29,6 +29,7 @@ import uk.co.terragaming.TerraCore.Commands.annotations.Perm;
 import uk.co.terragaming.TerraCore.Commands.annotations.Usage;
 import uk.co.terragaming.TerraCore.Commands.arguments.ArgumentParser;
 import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException;
+import uk.co.terragaming.TerraCore.Commands.exceptions.AuthorizationException;
 import uk.co.terragaming.TerraCore.Util.Context;
 import uk.co.terragaming.TerraCore.Util.Text.MyText;
 
@@ -145,6 +146,7 @@ public class MethodCommand {
 				
 				e = e.getAnother();
 			}
+		} catch (AuthorizationException e) {
 		} finally {
 			params.forEach(p -> {p.resetValue();});
 		}
@@ -162,6 +164,9 @@ public class MethodCommand {
 		} catch (ArgumentException ex) {
 			params.forEach(p -> {p.resetValue();});
 			throw ex;
+		} catch (AuthorizationException e) {
+			source.sendMessage(Text.of(TextColors.RED, "You do not have permission to execute this command!"));
+			return CommandResult.empty();
 		}
 		
 		boolean p = false;
@@ -209,7 +214,7 @@ public class MethodCommand {
 		return CommandResult.empty();
 	}
 	
-	private List<Object> parseArgs(CommandSource source, String args) throws ArgumentException{		
+	private List<Object> parseArgs(CommandSource source, String args) throws ArgumentException, AuthorizationException{		
 		List<Object> parsedArgs = Lists.newArrayList();
 		Context context = new Context();
 		context.put(CommandSource.class, source);

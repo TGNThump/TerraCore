@@ -92,7 +92,7 @@ public interface ArgumentParser {
 				break;
 			}
 			
-			if (i != 0 && i < 4) tb.append(Text.of(TextColors.WHITE, ", "));
+			if (i != 0 && i <= 4 && suggs.size() - i > 1) tb.append(Text.of(TextColors.WHITE, ", "));
 			tb.append(Text.of(TextColors.GRAY, suggs.get(i)));
 		}
 		

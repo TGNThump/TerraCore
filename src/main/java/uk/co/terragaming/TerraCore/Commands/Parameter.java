@@ -20,6 +20,7 @@ import uk.co.terragaming.TerraCore.Commands.annotations.Desc;
 import uk.co.terragaming.TerraCore.Commands.annotations.Perm;
 import uk.co.terragaming.TerraCore.Commands.arguments.ArgumentParser;
 import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException;
+import uk.co.terragaming.TerraCore.Commands.exceptions.AuthorizationException;
 
 import com.google.common.collect.Lists;
 
@@ -89,7 +90,7 @@ public class Parameter {
 		}
 		
 		if (!isFlag && !this.alias.isEmpty()) valid = false;
-		if (!isFlag && !this.perms.isEmpty()) valid = false;
+		if (!(isFlag || isOptional) && !this.perms.isEmpty()) valid = false;
 		if (!isFlag && !isOptional && this.defaultValue.isPresent()) valid = false;
 		if (isFlag && isVarArgs) valid = false;
 	
@@ -99,7 +100,20 @@ public class Parameter {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public String parse(CommandSource source, String args) throws ArgumentException{
+	public String parse(CommandSource source, String args) throws ArgumentException, AuthorizationException{
+		
+		if (!perms.isEmpty()){
+			
+			boolean perm = false;
+			for (String p : this.perms){
+				if (source.hasPermission(p)){
+					perm = true;
+					break;
+				}
+			}
+			if (!perm) throw new AuthorizationException();
+		}
+		
 		if (isFlag() && isBoolean()){
 			value = true;
 			return args;

@@ -23,7 +23,7 @@ public class PlayerJoinListener {
 		Player player = event.getTargetEntity();
 		
 		if (player.get(JoinData.class).isPresent() && player.getJoinData().firstPlayed().get().equals(player.getJoinData().lastPlayed().get())){
-			Location<World> spawn = data.spawn.getLocation();
+			Location<World> spawn = data.spawn.get();
 			
 			if (spawn != null){
 				if (!Objects.equals(player.getWorld().getUniqueId(), spawn.getExtent().getUniqueId())){
