@@ -21,6 +21,7 @@ import uk.co.terragaming.TerraEssentials.commands.JumpCommand;
 import uk.co.terragaming.TerraEssentials.commands.SpawnCommand;
 import uk.co.terragaming.TerraEssentials.commands.SpeedCommand;
 import uk.co.terragaming.TerraEssentials.commands.ThruCommand;
+import uk.co.terragaming.TerraEssentials.commands.TimeCommand;
 import uk.co.terragaming.TerraEssentials.commands.VanishCommand;
 import uk.co.terragaming.TerraEssentials.commands.WeatherCommand;
 import uk.co.terragaming.TerraEssentials.config.EssentialsData;
@@ -55,6 +56,7 @@ public class EssentialsModule extends GuiceModule{
 		commandService.registerCommands(plugin, new VanishCommand());
 		commandService.registerCommands(plugin, new WeatherCommand());
 		commandService.registerCommands(plugin, new SpawnCommand());
+		commandService.registerCommands(plugin, new TimeCommand());
 	}
 	
 	@Listener

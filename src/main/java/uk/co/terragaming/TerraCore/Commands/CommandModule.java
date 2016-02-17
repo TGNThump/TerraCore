@@ -15,6 +15,7 @@ import uk.co.terragaming.TerraCore.Commands.arguments.PlayerArgument;
 import uk.co.terragaming.TerraCore.Commands.arguments.StringArgument;
 import uk.co.terragaming.TerraCore.Commands.arguments.UserArgument;
 import uk.co.terragaming.TerraCore.Commands.arguments.WeatherArgument;
+import uk.co.terragaming.TerraCore.Commands.arguments.WorldTimeArgument;
 import uk.co.terragaming.TerraCore.Foundation.GuiceModule;
 import uk.co.terragaming.TerraCore.Foundation.Module;
 
@@ -48,6 +49,7 @@ public class CommandModule extends GuiceModule{
 			commandHandler.addArgumentParser(plugin, new GamemodeArgument());
 			commandHandler.addArgumentParser(plugin, new EnchantmentArgument());
 			commandHandler.addArgumentParser(plugin, new WeatherArgument());
+			commandHandler.addArgumentParser(plugin, new WorldTimeArgument());
 		}
 		return commandHandler;
 	}
