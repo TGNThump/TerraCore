@@ -3,6 +3,8 @@ package uk.co.terragaming.TerraCore.Commands;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static uk.co.terragaming.TerraCore.Util.Conditions.notNull;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
@@ -19,7 +21,6 @@ import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
-import uk.co.terragaming.TerraCore.TerraPlugin;
 import uk.co.terragaming.TerraCore.Commands.annotations.Alias;
 import uk.co.terragaming.TerraCore.Commands.annotations.Command;
 import uk.co.terragaming.TerraCore.Commands.annotations.Desc;
@@ -181,12 +182,29 @@ public class MethodCommand {
 			if (e instanceof InvocationTargetException){
 				Throwable c = e.getCause();
 				if (c == null) c = e;
-				source.sendMessage(Text.of(TextColors.RED, TextActions.showText(Text.of("Error: " + c)), "An error occoured while trying to execute this command."));
+				
+				Text.Builder builder = Text.builder();
+				builder.append(Text.of("Error: "));
+				
+				StringWriter sw = new StringWriter();
+				c.printStackTrace(new PrintWriter(sw));
+				builder.append(Text.of(sw.toString()));
+				
+				
+				source.sendMessage(Text.of(TextColors.RED, TextActions.showText(builder.build()), "An error occoured while trying to execute this command."));
+				c.printStackTrace();
 			} else {
-				source.sendMessage(Text.of(TextColors.RED, TextActions.showText(Text.of("Error: " + e)), "An error occoured while trying to execute this command."));
-			}
-			TerraPlugin.instance.logger.error("An error occoured trying to execute this command!");
-			TerraPlugin.instance.logger.error("Executed: " + method.toString() + " with Args: " + Arrays.toString(cmdParams.toArray()), e);
+				
+				Text.Builder builder = Text.builder();
+				builder.append(Text.of("Error: "));
+				
+				StringWriter sw = new StringWriter();
+				e.printStackTrace(new PrintWriter(sw));
+				builder.append(Text.of(sw.toString()));
+				
+				source.sendMessage(Text.of(TextColors.RED, TextActions.showText(builder.build()), "An error occoured while trying to execute this command."));
+				e.printStackTrace();
+			}			
 		}
 		return CommandResult.empty();
 	}

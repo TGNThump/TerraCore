@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Text.Builder;
@@ -42,6 +44,7 @@ public class CommandHandler implements MethodCommandService {
 	
 	private final TerraPlugin plugin;
 	
+	private List<Object> handlers = Lists.newArrayList();
 	private HashMap<String, MethodCommand> commands;
 	private Set<String> rootLabels;
 	
@@ -65,6 +68,13 @@ public class CommandHandler implements MethodCommandService {
 		return commands.containsKey(parentPath);
 	}
 	
+	@Listener
+	public void onServerStart(GameStartedServerEvent event){
+		for (Object handler : handlers){
+			TerraPlugin.get().injector.injectMembers(handler);
+		}
+	}
+	
 	@Override
 	public void registerCommands(Object plugin, Object handler) {
 		Plugin p = plugin.getClass().getAnnotation(Plugin.class);
@@ -79,12 +89,17 @@ public class CommandHandler implements MethodCommandService {
 			return m1.getAnnotation(Command.class).value().split(" ").length - m2.getAnnotation(Command.class).value().split(" ").length;
 		});
 		
+		boolean first = true;
 		for (Method m : methods){
+			if (first){
+				handlers.add(handler);
+				first = false;
+			}
 			if (!m.isAnnotationPresent(Command.class)) continue;
 			MethodCommand command = new MethodCommand(handler, m, this);
 			
 			getLogger().info("Registered Command '<h>" + (MyText.implode(command.getPath(), " ")) + "<r>'");
-			
+						
 			for (String path : command.getAliasPaths()){
 				commands.put(path, command);
 			}

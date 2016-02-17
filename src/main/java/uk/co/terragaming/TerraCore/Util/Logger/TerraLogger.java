@@ -6,15 +6,7 @@ import org.slf4j.Marker;
 import uk.co.terragaming.TerraCore.TerraPlugin;
 import uk.co.terragaming.TerraCore.Util.Text.MyText;
 
-public class TerraLogger implements org.slf4j.Logger {
-	
-//	private static final String prefix = "[<l>TerraCraft<r>]";
-//	private final String info = "[<l>INFO<r>] ";
-//	private final String debug = "[<l>DEBUG<r>] ";
-//	private final String warn = "[<l>WARN<r>] ";
-//	private final String error = "[<l>ERROR<r>] ";
-//	private final String trace = "[<l>TRACE<r>] ";
-	
+public class TerraLogger implements org.slf4j.Logger {	
 	private static final String prefix = "";
 	private final String info = "";
 	private final String debug = "";
@@ -80,22 +72,22 @@ public class TerraLogger implements org.slf4j.Logger {
 	
 	@Override
 	public void trace(Marker marker, String format, Object arg) {
-		
+		base.trace(marker, MyText.of(true, prefix + trace + format + reset, arg));
 	}
 	
 	@Override
 	public void trace(Marker marker, String format, Object arg1, Object arg2) {
-		
+		base.trace(marker, MyText.of(true, prefix + trace + format + reset, arg1, arg2));
 	}
 	
 	@Override
-	public void trace(Marker marker, String format, Object... argArray) {
-		
+	public void trace(Marker marker, String format, Object... arguments) {
+		base.trace(marker, MyText.of(true, prefix + trace + format + reset, arguments));
 	}
 	
 	@Override
 	public void trace(Marker marker, String msg, Throwable t) {
-		
+		base.trace(marker, MyText.of(true, prefix + trace + msg + reset), t);
 	}
 	
 	@Override
@@ -116,13 +108,11 @@ public class TerraLogger implements org.slf4j.Logger {
 	@Override
 	public void debug(String format, Object arg1, Object arg2) {
 		base.trace(MyText.of(true, prefix + debug + format + reset, arg1, arg2));
-
 	}
 	
 	@Override
 	public void debug(String format, Object... arguments) {
 		base.trace(MyText.of(true, prefix + debug + format + reset, arguments));
-
 	}
 	
 	@Override
@@ -142,22 +132,22 @@ public class TerraLogger implements org.slf4j.Logger {
 	
 	@Override
 	public void debug(Marker marker, String format, Object arg) {
-		
+		base.trace(marker, MyText.of(true, prefix + debug + format + reset, arg));
 	}
 	
 	@Override
 	public void debug(Marker marker, String format, Object arg1, Object arg2) {
-		
+		base.trace(marker, MyText.of(true, prefix + debug + format + reset, arg1, arg2));
 	}
 	
 	@Override
 	public void debug(Marker marker, String format, Object... arguments) {
-		
+		base.trace(marker, MyText.of(true, prefix + debug + format + reset, arguments));
 	}
 	
 	@Override
 	public void debug(Marker marker, String msg, Throwable t) {
-		
+		base.trace(marker, MyText.of(true, prefix + debug + msg + reset), t);
 	}
 	
 	@Override
@@ -202,22 +192,22 @@ public class TerraLogger implements org.slf4j.Logger {
 	
 	@Override
 	public void info(Marker marker, String format, Object arg) {
-		
+		info(marker, String.format(format, arg));
 	}
 	
 	@Override
 	public void info(Marker marker, String format, Object arg1, Object arg2) {
-		
+		info(marker, String.format(format, arg1, arg2));
 	}
 	
 	@Override
 	public void info(Marker marker, String format, Object... arguments) {
-		
+		info(marker, String.format(format, arguments));	
 	}
 	
 	@Override
 	public void info(Marker marker, String msg, Throwable t) {
-		
+		base.info(marker, MyText.of(true, prefix + info + msg + reset), t);
 	}
 	
 	@Override

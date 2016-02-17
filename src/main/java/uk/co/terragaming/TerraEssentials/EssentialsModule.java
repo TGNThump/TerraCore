@@ -1,7 +1,10 @@
 package uk.co.terragaming.TerraEssentials;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
+import org.spongepowered.api.event.game.state.GameStartingServerEvent;
+import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
 
 import uk.co.terragaming.TerraCore.TerraPlugin;
 import uk.co.terragaming.TerraCore.Commands.MethodCommandService;
@@ -15,12 +18,16 @@ import uk.co.terragaming.TerraEssentials.commands.GamemodeCommand;
 import uk.co.terragaming.TerraEssentials.commands.HealCommand;
 import uk.co.terragaming.TerraEssentials.commands.InvseeCommand;
 import uk.co.terragaming.TerraEssentials.commands.JumpCommand;
+import uk.co.terragaming.TerraEssentials.commands.SpawnCommand;
 import uk.co.terragaming.TerraEssentials.commands.SpeedCommand;
 import uk.co.terragaming.TerraEssentials.commands.ThruCommand;
 import uk.co.terragaming.TerraEssentials.commands.VanishCommand;
 import uk.co.terragaming.TerraEssentials.commands.WeatherCommand;
+import uk.co.terragaming.TerraEssentials.config.EssentialsData;
+import uk.co.terragaming.TerraEssentials.listeners.PlayerJoinListener;
 
 import com.google.inject.Inject;
+import com.google.inject.Provides;
 
 @Module(name="EssentialsModule")
 public class EssentialsModule extends GuiceModule{
@@ -30,6 +37,8 @@ public class EssentialsModule extends GuiceModule{
 	
 	@Inject
 	MethodCommandService commandService;
+	
+	EssentialsData data;
 	
 	@Listener
     public void onInitialize(GameInitializationEvent event) {
@@ -45,6 +54,23 @@ public class EssentialsModule extends GuiceModule{
 		commandService.registerCommands(plugin, new JumpCommand());
 		commandService.registerCommands(plugin, new VanishCommand());
 		commandService.registerCommands(plugin, new WeatherCommand());
+		commandService.registerCommands(plugin, new SpawnCommand());
+	}
+	
+	@Listener
+	public void onServerStarting(GameStartingServerEvent event){
+		data = new EssentialsData();
+		Sponge.getEventManager().registerListeners(plugin, inject(new PlayerJoinListener()));
+	}
+	
+	@Listener
+	public void onServerStopping(GameStoppedServerEvent event){
+		data.save();
+	}
+	
+	@Provides
+	EssentialsData getData(){
+		return data;
 	}
 	
 }

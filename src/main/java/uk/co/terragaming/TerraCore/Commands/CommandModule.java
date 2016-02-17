@@ -33,7 +33,7 @@ public class CommandModule extends GuiceModule{
 	MethodCommandService getCommandHandler(TerraPlugin plugin){
 		if (commandHandler == null){
 			
-			commandHandler = new CommandHandler(plugin);
+			commandHandler = inject(new CommandHandler(plugin));
 			Sponge.getServiceManager().setProvider(plugin, MethodCommandService.class, commandHandler);
 			Sponge.getEventManager().registerListeners(plugin, commandHandler);
 			

@@ -1,22 +1,17 @@
 package uk.co.terragaming.TerraCore;
 
-import java.io.File;
 import java.util.Collection;
 
 import javax.inject.Inject;
 
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-import ninja.leaping.configurate.loader.ConfigurationLoader;
-
 import org.slf4j.Logger;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.config.ConfigDir;
-import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.plugin.PluginManager;
 
+import uk.co.terragaming.TerraCore.Config.MainConfig;
 import uk.co.terragaming.TerraCore.Enums.ServerMode;
 import uk.co.terragaming.TerraCore.Foundation.ModuleManager;
 import uk.co.terragaming.TerraCore.Util.Logger.TerraLogger;
@@ -25,19 +20,21 @@ import uk.co.terragaming.TerraCore.Util.Text.MyText;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
-@Plugin(id = "TerraCraft", name = "TerraCraft", version = "0.0.4")
+@Plugin(id = "TC", name = "TerraCore", version = "0.0.4")
 public class TerraPlugin {
 	
 	public static TerraPlugin instance;
 	protected ModuleManager moduleManager;
-	protected ConfigurationLoader<CommentedConfigurationNode> configManager;
 	public ServerMode serverMode = ServerMode.STARTING;
 	public Logger baseLogger;
 	public TerraLogger logger;
-	public File configDir;
-	public File config;
 	public Injector baseInjector;
 	public Injector injector;
+	
+	public MainConfig config;
+	
+	@Inject
+	private PluginManager pluginManager;
 	
 	@Inject
 	public void setBaseInjector(Injector baseInjector){
@@ -49,21 +46,6 @@ public class TerraPlugin {
 		baseLogger = logger;
 	}
 	
-	@Inject
-	public void setConfigDir(@ConfigDir(sharedRoot = false) File file){
-		configDir = file;
-	}
-	
-	@Inject
-	public void setConfig(@DefaultConfig(sharedRoot = false) File file){
-		config = file;
-	}
-	
-	@Inject
-	public void setConfigManager(@DefaultConfig(sharedRoot = true) ConfigurationLoader<CommentedConfigurationNode> manager){
-		configManager = manager;
-	}
-	
 	public TerraPlugin(){
 		instance = this;
 		System.setProperty("jansi.passthrough", "true");
@@ -72,10 +54,10 @@ public class TerraPlugin {
 	}
 	
 	@Listener
-	public void onPreInit(GamePreInitializationEvent event){
+	public void onPreInit(GamePreInitializationEvent event){		
 		logger = new TerraLogger();
 		
-		PluginContainer plugin = Sponge.getGame().getPluginManager().fromInstance(this).get();
+		PluginContainer plugin = getPluginContainer();
 				
 		String spacer = MyText.repeat("-", (" Launching " + plugin.getName() + " V" + plugin.getVersion() + " ").length());
 		String msg = "<l> Launching " + plugin.getName() + " V" + plugin.getVersion() + " ";
@@ -93,6 +75,15 @@ public class TerraPlugin {
 		
 		logger.blank();
 		logger.info("All <h>%s<r> enabled mechanics have been loaded.", moduleManager.getEnabledCount());
+		
+		logger.blank();
+		
+		logger.info("<l>Loading Configuration.<r>");
+
+		config = new MainConfig();
+		
+		logger.blank();
+		logger.info("Successfully Loaded Configuration.");
 		
 		logger.blank();
 		logger.info("<l>Creating Injector.<r>");
@@ -124,5 +115,13 @@ public class TerraPlugin {
 		logger.blank();
 		
 		//serverMode = ServerMode.valueOf(getConfig().get("TerraCraft.Server.Mode").toString());
+	}
+	
+	public static PluginContainer getPluginContainer(){
+		return instance.pluginManager.fromInstance(instance).get();
+	}
+	
+	public static TerraPlugin get(){
+		return instance;
 	}
 }

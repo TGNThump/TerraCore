@@ -36,6 +36,7 @@ public class WeatherCommand {
 			} else {
 				locSource.getWorld().forecast(weather);
 			}
+			
 			if (source instanceof Player){
 				Player player = (Player) source;
 				player.sendMessage(Text.of(TextColors.AQUA, "Set the weather to ", TextColors.YELLOW, weather.getName(), TextColors.AQUA, "."));
