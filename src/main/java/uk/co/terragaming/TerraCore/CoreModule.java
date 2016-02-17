@@ -29,7 +29,7 @@ public class CoreModule extends GuiceModule{
 		commandService.registerCommands(plugin, new CoreCommands());
 	}
 		
-	@Provides @Singleton
+	@Provides
 	TerraLogger getTerraLogger(TerraPlugin plugin){
 		return plugin.logger;
 	}

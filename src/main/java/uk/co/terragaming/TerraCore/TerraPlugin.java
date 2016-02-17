@@ -7,6 +7,9 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
+import org.spongepowered.api.event.game.state.GameStartedServerEvent;
+import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
+import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.plugin.PluginManager;
@@ -111,10 +114,23 @@ public class TerraPlugin {
 		moduleManager.onEnableAll();
 		
 		logger.blank();
-		logger.info("<l>Server loaded in <h>%s<l> mode.<r>", "MODE");
+		logger.info("<l>Server loaded in <h>%s<l> mode.<r>", config.server.mode.toString());
 		logger.blank();
-		
-		//serverMode = ServerMode.valueOf(getConfig().get("TerraCraft.Server.Mode").toString());
+	}
+	
+	@Listener
+	public void onServerStarted(GameStartedServerEvent event){
+		serverMode = config.server.mode;
+	}
+	
+	@Listener
+	public void onServerStopping(GameStoppingServerEvent event){
+		serverMode = ServerMode.STOPPING;
+	}
+	
+	@Listener
+	public void onServerStopped(GameStoppedServerEvent event){
+		config.save();
 	}
 	
 	public static PluginContainer getPluginContainer(){

@@ -55,9 +55,10 @@ public class SpawnCommand {
 		}
 	}
 	
-	@Command("spawn set")
+	@Command("setspawn")
 	@Desc("Set the spawn point.")
 	@Perm("tc.core.spawn.set")
+	@Alias("spawn set")
 	public CommandResult onSpawnSet(Context context){
 		CommandSource source = context.get(CommandSource.class);
 		
@@ -72,10 +73,10 @@ public class SpawnCommand {
 		}
 	}
 	
-	@Command("setspawn")
-	@Desc("Set the spawn point.")
-	@Perm("tc.core.spawn.set")
-	public CommandResult onSetSpawn(Context context){
-		return onSpawnSet(context);
-	}
+//	@Command("setspawn")
+//	@Desc("Set the spawn point.")
+//	@Perm("tc.core.spawn.set")
+//	public CommandResult onSetSpawn(Context context){
+//		return onSpawnSet(context);
+//	}
 }

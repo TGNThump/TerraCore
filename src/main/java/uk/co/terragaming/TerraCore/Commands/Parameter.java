@@ -46,6 +46,58 @@ public class Parameter {
 	
 	private Object value = defaultValue.orElse(null);
 	
+	public Parameter(MethodCommand method, CommandHandler handler, java.lang.reflect.Parameter parameter){
+		checkNotNull(method, "method");
+		checkNotNull(parameter, "parameter");
+		this.method = method;
+		this.parameter = parameter;
+		
+		Desc desc = parameter.getAnnotation(Desc.class);
+		Default defaultValue = parameter.getAnnotation(Default.class);
+		Perm[] perms = parameter.getAnnotationsByType(Perm.class);
+		Alias[] alias = parameter.getAnnotationsByType(Alias.class);
+		
+		this.primary = parameter.getName();
+		this.type = parameter.getType();
+		
+		this.isVarArgs = parameter.isVarArgs();
+		
+		if (this.isVarArgs){
+			this.type = parameter.getType().getComponentType();
+			this.value = Lists.newArrayList();
+		}
+		
+		if (this.type.isAssignableFrom(Optional.class)){
+			this.isOptional = true;
+			this.type = (Class<?>)((ParameterizedType)parameter.getParameterizedType()).getActualTypeArguments()[0];
+		}
+		
+		if (this.type.isAssignableFrom(Flag.class)){
+			this.isFlag = true;
+			this.type = (Class<?>)((ParameterizedType)parameter.getParameterizedType()).getActualTypeArguments()[0];
+		}
+		
+		if (notNull(desc)) this.desc = Optional.of(desc.value());
+		if (notNull(defaultValue)) this.defaultValue = Optional.of(defaultValue.value());
+		
+		for (int i = 0; i < perms.length; i++){
+			this.perms.add(perms[i].value());
+		}
+		
+		for (int i = 0; i < alias.length; i++){
+			this.alias.add(alias[i].value());
+		}
+		
+		if (!isFlag && !this.alias.isEmpty()) valid = false;
+		if (!isFlag && !this.perms.isEmpty()) valid = false;
+		if (!isFlag && !isOptional && this.defaultValue.isPresent()) valid = false;
+		if (isFlag && isVarArgs) valid = false;
+	
+		this.alias.add(primary);
+		
+		this.ap = handler.getArgumentParser(this.type);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public String parse(CommandSource source, String args) throws ArgumentException{
 		if (isFlag() && isBoolean()){
@@ -102,58 +154,6 @@ public class Parameter {
 		if (isVarArgs()){
 			this.value = Lists.newArrayList();
 		}
-	}
-	
-	public Parameter(MethodCommand method, CommandHandler handler, java.lang.reflect.Parameter parameter){
-		checkNotNull(method, "method");
-		checkNotNull(parameter, "parameter");
-		this.method = method;
-		this.parameter = parameter;
-		
-		Desc desc = parameter.getAnnotation(Desc.class);
-		Default defaultValue = parameter.getAnnotation(Default.class);
-		Perm[] perms = parameter.getAnnotationsByType(Perm.class);
-		Alias[] alias = parameter.getAnnotationsByType(Alias.class);
-		
-		this.primary = parameter.getName();
-		this.type = parameter.getType();
-		
-		this.isVarArgs = parameter.isVarArgs();
-		
-		if (this.isVarArgs){
-			this.type = parameter.getType().getComponentType();
-			this.value = Lists.newArrayList();
-		}
-		
-		if (this.type.isAssignableFrom(Optional.class)){
-			this.isOptional = true;
-			this.type = (Class<?>)((ParameterizedType)parameter.getParameterizedType()).getActualTypeArguments()[0];
-		}
-		
-		if (this.type.isAssignableFrom(Flag.class)){
-			this.isFlag = true;
-			this.type = (Class<?>)((ParameterizedType)parameter.getParameterizedType()).getActualTypeArguments()[0];
-		}
-		
-		if (notNull(desc)) this.desc = Optional.of(desc.value());
-		if (notNull(defaultValue)) this.defaultValue = Optional.of(defaultValue.value());
-		
-		for (int i = 0; i < perms.length; i++){
-			this.perms.add(perms[i].value());
-		}
-		
-		for (int i = 0; i < alias.length; i++){
-			this.alias.add(alias[i].value());
-		}
-		
-		if (!isFlag && !this.alias.isEmpty()) valid = false;
-		if (!isFlag && !this.perms.isEmpty()) valid = false;
-		if (!isFlag && !isOptional && this.defaultValue.isPresent()) valid = false;
-		if (isFlag && isVarArgs) valid = false;
-	
-		this.alias.add(primary);
-		
-		this.ap = handler.getArgumentParser(this.type);
 	}
 	
 	public Text getUsage(CommandSource source){
@@ -277,10 +277,6 @@ public class Parameter {
 		return defaultValue;
 	}
 	
-	/**
-	 * Get a list of all aliases (including the primary) for this parameter.
-	 * @return A list of aliases.
-	 */
 	public List<String> getAliases() {
 		return alias;
 	}
@@ -289,10 +285,6 @@ public class Parameter {
 		return perms;
 	}
 	
-	/**
-	 * Evaluates true if the method is a valid command.
-	 * @return The validity of the command.
-	 */
 	public boolean isValid(){
 		return valid;
 	}
