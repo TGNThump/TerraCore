@@ -25,51 +25,51 @@ public abstract class ConfigBase {
 	private TerraLogger logger = TerraPlugin.instance.logger;
 	
 	public ConfigBase(String folder, String configName){
-		 folder = "config/" + TerraPlugin.getPluginContainer().getName().toLowerCase() + "/" + folder + "/";
+		folder = "config/" + TerraPlugin.getPluginContainer().getName().toLowerCase() + "/" + folder + "/";
 		 
-		 if (!new File(folder).isDirectory()){
-			 new File(folder).mkdirs();
-		 }
+		if (!new File(folder).isDirectory()){
+			new File(folder).mkdirs();
+		}
 		 
-		 file = new File(folder + configName);
+		file = new File(folder + configName);
 		 
-		 create();
-		 init();
-		 load();
-		 setDefaults();
-		 save();
+		create();
+		init();
+		load();
+		setDefaults();
+		save();
 	}
 	
 	public ConfigBase(String configName){
-		 String folder = "config/" + TerraPlugin.getPluginContainer().getName().toLowerCase() + "/";
+		String folder = "config/" + TerraPlugin.getPluginContainer().getName().toLowerCase() + "/";
 		 
-		 if (!new File(folder).isDirectory()){
-			 new File(folder).mkdirs();
-		 }
+		if (!new File(folder).isDirectory()){
+			new File(folder).mkdirs();
+		}
 		 
-		 file = new File(folder + configName);
+		file = new File(folder + configName);
 		 
-		 create();
-		 init();
-		 load();
-		 setDefaults();
-		 save();
+		create();
+		init();
+		load();
+		setDefaults();
+		save();
 	}
 	
 	public ConfigBase(){
 		String folder = "config/" + TerraPlugin.getPluginContainer().getName().toLowerCase() + "/";
 		 
-		 if (!new File(folder).isDirectory()){
-			 new File(folder).mkdirs();
+		if (!new File(folder).isDirectory()){
+			new File(folder).mkdirs();
 		 }
 		 
-		 file = new File(folder + "config.conf");
+		file = new File(folder + "config.conf");
 		 
-		 create();
-		 init();
-		 load();
-		 setDefaults();
-		 save();
+		create();
+		init();
+		load();
+		setDefaults();
+		save();
 	}
 	
 	private void init(){

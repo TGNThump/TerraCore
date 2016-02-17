@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
@@ -37,8 +39,12 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.inject.Injector;
 
 public class CommandHandler implements MethodCommandService {
+	
+	@Inject
+	Injector injector;
 	
 	private static final ObjectArgument DEFAULT_ARG_PARSER = new ObjectArgument();
 	
@@ -71,7 +77,7 @@ public class CommandHandler implements MethodCommandService {
 	@Listener
 	public void onServerStart(GameStartedServerEvent event){
 		for (Object handler : handlers){
-			TerraPlugin.get().injector.injectMembers(handler);
+			injector.injectMembers(handler);
 		}
 	}
 	

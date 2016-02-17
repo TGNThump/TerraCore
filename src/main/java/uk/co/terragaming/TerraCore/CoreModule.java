@@ -1,11 +1,10 @@
 package uk.co.terragaming.TerraCore;
 
-import javax.inject.Singleton;
-
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 
 import uk.co.terragaming.TerraCore.Commands.MethodCommandService;
+import uk.co.terragaming.TerraCore.Config.MainConfig;
 import uk.co.terragaming.TerraCore.Enums.ServerMode;
 import uk.co.terragaming.TerraCore.Foundation.GuiceModule;
 import uk.co.terragaming.TerraCore.Foundation.Module;
@@ -39,9 +38,14 @@ public class CoreModule extends GuiceModule{
 		return plugin.serverMode;
 	}
 	
-	@Provides @Singleton
+	@Provides
 	ModuleManager provideModuleManager(){
-		return new ModuleManager();
+		return plugin.moduleManager;
+	}
+	
+	@Provides
+	MainConfig provideConfig(TerraPlugin plugin){
+		return plugin.config;
 	}
 	
 }

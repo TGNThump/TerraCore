@@ -27,7 +27,7 @@ import com.google.inject.Module;
 public class TerraPlugin {
 	
 	public static TerraPlugin instance;
-	protected ModuleManager moduleManager;
+	public ModuleManager moduleManager;
 	public ServerMode serverMode = ServerMode.STARTING;
 	public Logger baseLogger;
 	public TerraLogger logger;
@@ -135,9 +135,5 @@ public class TerraPlugin {
 	
 	public static PluginContainer getPluginContainer(){
 		return instance.pluginManager.fromInstance(instance).get();
-	}
-	
-	public static TerraPlugin get(){
-		return instance;
 	}
 }
