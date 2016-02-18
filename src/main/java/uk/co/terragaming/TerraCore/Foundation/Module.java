@@ -12,6 +12,7 @@ import java.lang.annotation.Target;
 public @interface Module{
 
 	String name();
+	String version() default "unknown";
 	boolean enabled() default true;
 	Class<?> parent() default void.class;
 	
