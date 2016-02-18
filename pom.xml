@@ -14,7 +14,7 @@
 		<ghRepo>TerraCore</ghRepo>
 		<ghProject>${ghUser}/${ghRepo}</ghProject>
 	</properties>
-	
+
 	<url>https://${ghUser}.github.io/${ghRepo}</url>
 	<issueManagement>
 		<system>GitHub</system>
@@ -92,6 +92,40 @@
 				<filtering>true</filtering>
 			</resource>
 		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.4.3</version>
+				<executions>
+					<execution>
+						<id>main</id>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<finalName>${project.name}</finalName>
+						</configuration>
+					</execution>
+					<execution>
+						<id>libs</id>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<artifactSet>
+								<excludes>
+									<exclude>${project.groupId}:${project.artifactId}</exclude>
+								</excludes>
+							</artifactSet>
+							<finalName>libs</finalName>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 		<pluginManagement>
 			<plugins>
 				<plugin>
