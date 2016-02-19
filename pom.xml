@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>uk.co.terragaming</groupId>
 	<artifactId>terracore</artifactId>
-	<version>0.4</version>
+	<version>0.0.1</version>
 	<name>TerraCore</name>
 	<description>Sponge Plugin Core Library</description>
 	<properties>

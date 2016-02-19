@@ -2,8 +2,8 @@ package uk.co.terragaming.TerraCore.Commands;
 
 import org.spongepowered.api.Sponge;
 
-import uk.co.terragaming.TerraCore.TerraCore;
 import uk.co.terragaming.TerraCore.CorePlugin;
+import uk.co.terragaming.TerraCore.TerraCore;
 import uk.co.terragaming.TerraCore.Commands.arguments.BooleanArgument;
 import uk.co.terragaming.TerraCore.Commands.arguments.CatalogArgument;
 import uk.co.terragaming.TerraCore.Commands.arguments.CharArgument;
@@ -15,6 +15,8 @@ import uk.co.terragaming.TerraCore.Commands.arguments.PlayerArgument;
 import uk.co.terragaming.TerraCore.Commands.arguments.StringArgument;
 import uk.co.terragaming.TerraCore.Commands.arguments.UserArgument;
 import uk.co.terragaming.TerraCore.Commands.arguments.WeatherArgument;
+import uk.co.terragaming.TerraCore.Commands.arguments.WorldArgument;
+import uk.co.terragaming.TerraCore.Commands.arguments.WorldPropertiesArgument;
 import uk.co.terragaming.TerraCore.Commands.arguments.WorldTimeArgument;
 import uk.co.terragaming.TerraCore.Foundation.GuiceModule;
 import uk.co.terragaming.TerraCore.Foundation.Module;
@@ -50,6 +52,8 @@ public class CommandModule extends GuiceModule{
 			commandHandler.addArgumentParser(plugin, new EnchantmentArgument());
 			commandHandler.addArgumentParser(plugin, new WeatherArgument());
 			commandHandler.addArgumentParser(plugin, new WorldTimeArgument());
+			commandHandler.addArgumentParser(plugin, new WorldArgument());
+			commandHandler.addArgumentParser(plugin, new WorldPropertiesArgument());
 		}
 		return commandHandler;
 	}
