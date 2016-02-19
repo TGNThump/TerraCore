@@ -2,6 +2,14 @@ package uk.co.terragaming.TerraCore.Config;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
+import java.util.UUID;
+
+import javax.inject.Inject;
+
+import org.spongepowered.api.Server;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 import ninja.leaping.configurate.SimpleConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -9,6 +17,7 @@ import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMapper;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 import uk.co.terragaming.TerraCore.TerraPlugin;
 import uk.co.terragaming.TerraCore.Util.Logger.TerraLogger;
@@ -131,5 +140,46 @@ public abstract class ConfigBase {
 		}
 		
     }
+	
+	@ConfigSerializable
+	public static class WorldLocation extends ConfigBase.Category{
+		
+		@Inject
+		Server server;
+		
+		@Setting
+		public Double x;
+		
+		@Setting
+		public Double y;
+		
+		@Setting
+		public Double z;
+		
+		@Setting("world-uuid")
+		public UUID worldUUID;
+		
+		public WorldLocation(){}
+		
+		public WorldLocation(Location<World> loc){
+			set(loc);
+		}
+		
+		public void set(Location<World> loc){
+			this.x = loc.getX();
+			this.y = loc.getY();
+			this.z = loc.getZ();
+			this.worldUUID = loc.getExtent().getUniqueId();
+		}
+		
+		public Location<World> get(){
+			Optional<World> world = server.getWorld(worldUUID);
+			if (world.isPresent()){
+				return new Location<World>(world.get(), x, y, z);
+			}
+			
+			return server.getWorld(server.getDefaultWorld().get().getUniqueId()).get().getSpawnLocation();
+		}
+	}
 	
 }
