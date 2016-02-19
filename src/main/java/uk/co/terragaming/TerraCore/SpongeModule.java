@@ -8,6 +8,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandManager;
 import org.spongepowered.api.data.property.PropertyRegistry;
 import org.spongepowered.api.scheduler.Scheduler;
+import org.spongepowered.api.service.pagination.PaginationService;
 
 import uk.co.terragaming.TerraCore.Foundation.GuiceModule;
 import uk.co.terragaming.TerraCore.Foundation.Module;
@@ -33,5 +34,10 @@ public class SpongeModule extends GuiceModule{
 	@Provides
 	Server getServer(){
 		return Sponge.getGame().getServer();
+	}
+	
+	@Provides
+	PaginationService getPaginationService(){
+		return Sponge.getServiceManager().provideUnchecked(PaginationService.class);
 	}
 }
