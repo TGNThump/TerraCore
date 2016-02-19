@@ -14,12 +14,11 @@ import uk.co.terragaming.TerraCore.Foundation.Module;
 
 import com.google.inject.Provides;
 
-@Module(name = "SpongeModule", parent = CoreModule.class)
+@Module(name = "SpongeModule", parent = TerraCore.class)
 public class SpongeModule extends GuiceModule{
 	
 	@Override 
 	protected void configure() {
-		bind(Server.class).toInstance(Sponge.getGame().getServer());
 		bind(CommandManager.class).toInstance(Sponge.getCommandManager());
 		bind(Scheduler.class).toInstance(Sponge.getScheduler());
 		bind(GameDictionary.class).toInstance(Sponge.getDictionary());
@@ -29,5 +28,10 @@ public class SpongeModule extends GuiceModule{
 	@Provides
 	GameState getState(Game game){
 		return game.getState();
+	}
+	
+	@Provides
+	Server getServer(){
+		return Sponge.getGame().getServer();
 	}
 }

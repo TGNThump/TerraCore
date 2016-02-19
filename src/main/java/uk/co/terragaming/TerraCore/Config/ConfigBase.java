@@ -19,7 +19,7 @@ import ninja.leaping.configurate.objectmapping.ObjectMapper;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
-import uk.co.terragaming.TerraCore.TerraPlugin;
+import uk.co.terragaming.TerraCore.CorePlugin;
 import uk.co.terragaming.TerraCore.Util.Logger.TerraLogger;
 
 
@@ -31,11 +31,19 @@ public abstract class ConfigBase {
 	private ObjectMapper<ConfigBase>.BoundInstance configMapper;
 	private ConfigurationLoader<CommentedConfigurationNode> loader;
 	
-	private TerraLogger logger = TerraPlugin.instance.logger;
+	private TerraLogger logger = CorePlugin.instance.logger;
+	
+	private void injectConfig(){
+		if (CorePlugin.instance.injector == null){
+			CorePlugin.instance.baseInjector.injectMembers(this);
+		} else {
+			CorePlugin.instance.injector.injectMembers(this);
+		}
+	}
 	
 	public ConfigBase(String folder, String configName){
-		TerraPlugin.instance.injector.injectMembers(this);
-		folder = "config/" + TerraPlugin.getPluginContainer().getName().toLowerCase() + "/" + folder + "/";
+		injectConfig();
+		folder = "config/" + CorePlugin.getPluginContainer().getName().toLowerCase() + "/" + folder + "/";
 		 
 		if (!new File(folder).isDirectory()){
 			new File(folder).mkdirs();
@@ -51,8 +59,8 @@ public abstract class ConfigBase {
 	}
 	
 	public ConfigBase(String configName){
-		TerraPlugin.instance.injector.injectMembers(this);
-		String folder = "config/" + TerraPlugin.getPluginContainer().getName().toLowerCase() + "/";
+		injectConfig();
+		String folder = "config/" + CorePlugin.getPluginContainer().getName().toLowerCase() + "/";
 		 
 		if (!new File(folder).isDirectory()){
 			new File(folder).mkdirs();
@@ -68,8 +76,8 @@ public abstract class ConfigBase {
 	}
 	
 	public ConfigBase(){
-		TerraPlugin.instance.injector.injectMembers(this);
-		String folder = "config/" + TerraPlugin.getPluginContainer().getName().toLowerCase() + "/";
+		injectConfig();
+		String folder = "config/" + CorePlugin.getPluginContainer().getName().toLowerCase() + "/";
 		 
 		if (!new File(folder).isDirectory()){
 			new File(folder).mkdirs();
@@ -135,8 +143,16 @@ public abstract class ConfigBase {
 	@ConfigSerializable
 	protected static class Category {
 		
+		private void injectConfig(){
+			if (CorePlugin.instance.injector == null){
+				CorePlugin.instance.baseInjector.injectMembers(this);
+			} else {
+				CorePlugin.instance.injector.injectMembers(this);
+			}
+		}
+		
 		protected Category(){
-			TerraPlugin.instance.injector.injectMembers(this);
+			injectConfig();
 		}
 		
     }

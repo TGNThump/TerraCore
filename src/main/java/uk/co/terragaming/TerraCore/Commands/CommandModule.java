@@ -2,8 +2,8 @@ package uk.co.terragaming.TerraCore.Commands;
 
 import org.spongepowered.api.Sponge;
 
-import uk.co.terragaming.TerraCore.CoreModule;
-import uk.co.terragaming.TerraCore.TerraPlugin;
+import uk.co.terragaming.TerraCore.TerraCore;
+import uk.co.terragaming.TerraCore.CorePlugin;
 import uk.co.terragaming.TerraCore.Commands.arguments.BooleanArgument;
 import uk.co.terragaming.TerraCore.Commands.arguments.CatalogArgument;
 import uk.co.terragaming.TerraCore.Commands.arguments.CharArgument;
@@ -22,16 +22,16 @@ import uk.co.terragaming.TerraCore.Foundation.Module;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 
-@Module(name="CommandModule", parent = CoreModule.class)
+@Module(name="CommandModule", parent = TerraCore.class)
 public class CommandModule extends GuiceModule{
 	
 	@Inject
-	TerraPlugin plugin;
+	CorePlugin plugin;
 	
 	private CommandHandler commandHandler;
 	
 	@Provides
-	MethodCommandService getCommandHandler(TerraPlugin plugin){
+	MethodCommandService getCommandHandler(CorePlugin plugin){
 		if (commandHandler == null){
 			
 			commandHandler = inject(new CommandHandler(plugin));

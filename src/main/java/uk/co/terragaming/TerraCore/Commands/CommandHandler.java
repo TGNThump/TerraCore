@@ -26,13 +26,14 @@ import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
-import uk.co.terragaming.TerraCore.TerraPlugin;
+import uk.co.terragaming.TerraCore.CorePlugin;
 import uk.co.terragaming.TerraCore.Commands.annotations.Command;
 import uk.co.terragaming.TerraCore.Commands.arguments.ArgumentParser;
 import uk.co.terragaming.TerraCore.Commands.arguments.ObjectArgument;
 import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException;
 import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException.NotEnoughArgumentsException;
 import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException.TooManyArgumentsException;
+import uk.co.terragaming.TerraCore.Config.MainConfig;
 import uk.co.terragaming.TerraCore.Util.Text.MyText;
 
 import com.google.common.base.Strings;
@@ -46,9 +47,12 @@ public class CommandHandler implements MethodCommandService {
 	@Inject
 	Injector injector;
 	
+	@Inject
+	MainConfig config;
+	
 	private static final ObjectArgument DEFAULT_ARG_PARSER = new ObjectArgument();
 	
-	private final TerraPlugin plugin;
+	private final CorePlugin plugin;
 	
 	private List<Object> handlers = Lists.newArrayList();
 	private HashMap<String, MethodCommand> commands;
@@ -56,7 +60,7 @@ public class CommandHandler implements MethodCommandService {
 	
 	private List<ArgumentParser> argumentParsers;
 	
-	public CommandHandler(TerraPlugin plugin){
+	public CommandHandler(CorePlugin plugin){
 		checkNotNull(plugin);
 		this.plugin = plugin;
 		
@@ -104,7 +108,9 @@ public class CommandHandler implements MethodCommandService {
 			if (!m.isAnnotationPresent(Command.class)) continue;
 			MethodCommand command = new MethodCommand(handler, m, this);
 			
-			getLogger().info("Registered Command '<h>" + (MyText.implode(command.getPath(), " ")) + "<r>'");
+			if (CorePlugin.isDevelopmentMode()){
+				getLogger().info("Registered Command '<h>" + (MyText.implode(command.getPath(), " ")) + "<r>'");
+			}
 						
 			for (String path : command.getAliasPaths()){
 				commands.put(path, command);
@@ -412,7 +418,7 @@ public class CommandHandler implements MethodCommandService {
 		return cmdSet;
 	}
 	
-	public TerraPlugin getPlugin(){
+	public CorePlugin getPlugin(){
 		return plugin;
 	}
 

@@ -5,7 +5,6 @@ import org.spongepowered.api.event.game.state.GameInitializationEvent;
 
 import uk.co.terragaming.TerraCore.Commands.MethodCommandService;
 import uk.co.terragaming.TerraCore.Config.MainConfig;
-import uk.co.terragaming.TerraCore.Enums.ServerMode;
 import uk.co.terragaming.TerraCore.Foundation.GuiceModule;
 import uk.co.terragaming.TerraCore.Foundation.Module;
 import uk.co.terragaming.TerraCore.Foundation.ModuleManager;
@@ -14,11 +13,11 @@ import uk.co.terragaming.TerraCore.Util.Logger.TerraLogger;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 
-@Module(name = "CoreModule")
-public class CoreModule extends GuiceModule{
+@Module(name = PomData.NAME, version = PomData.VERSION)
+public class TerraCore extends GuiceModule{
 	
 	@Inject
-	TerraPlugin plugin;
+	CorePlugin plugin;
 	
 	@Inject
 	MethodCommandService commandService;
@@ -29,13 +28,8 @@ public class CoreModule extends GuiceModule{
 	}
 		
 	@Provides
-	TerraLogger getTerraLogger(TerraPlugin plugin){
+	TerraLogger getTerraLogger(CorePlugin plugin){
 		return plugin.logger;
-	}
-	
-	@Provides
-	ServerMode provideServerMode(TerraPlugin plugin){
-		return plugin.serverMode;
 	}
 	
 	@Provides
@@ -44,7 +38,7 @@ public class CoreModule extends GuiceModule{
 	}
 	
 	@Provides
-	MainConfig provideConfig(TerraPlugin plugin){
+	MainConfig provideConfig(CorePlugin plugin){
 		return plugin.config;
 	}
 	

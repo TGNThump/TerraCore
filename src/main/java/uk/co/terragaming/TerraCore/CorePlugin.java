@@ -7,15 +7,12 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
-import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
-import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.plugin.PluginManager;
 
 import uk.co.terragaming.TerraCore.Config.MainConfig;
-import uk.co.terragaming.TerraCore.Enums.ServerMode;
 import uk.co.terragaming.TerraCore.Foundation.ModuleManager;
 import uk.co.terragaming.TerraCore.Util.Logger.TerraLogger;
 import uk.co.terragaming.TerraCore.Util.Text.MyText;
@@ -23,12 +20,11 @@ import uk.co.terragaming.TerraCore.Util.Text.MyText;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
-@Plugin(id = "TC", name = "TerraCore", version = "0.0.4")
-public class TerraPlugin {
+@Plugin(id = "TC", name = PomData.NAME, version = PomData.VERSION)
+public class CorePlugin {
 	
-	public static TerraPlugin instance;
+	public static CorePlugin instance;
 	public ModuleManager moduleManager;
-	public ServerMode serverMode = ServerMode.STARTING;
 	public Logger baseLogger;
 	public TerraLogger logger;
 	public Injector baseInjector;
@@ -49,7 +45,7 @@ public class TerraPlugin {
 		baseLogger = logger;
 	}
 	
-	public TerraPlugin(){
+	public CorePlugin(){
 		instance = this;
 		System.setProperty("jansi.passthrough", "true");
 		moduleManager = new ModuleManager();
@@ -59,73 +55,43 @@ public class TerraPlugin {
 	@Listener
 	public void onPreInit(GamePreInitializationEvent event){		
 		logger = new TerraLogger();
-		
-		PluginContainer plugin = getPluginContainer();
-				
-		String spacer = MyText.repeat("-", (" Launching " + plugin.getName() + " V" + plugin.getVersion() + " ").length());
-		String msg = "<l> Launching " + plugin.getName() + " V" + plugin.getVersion() + " ";
-		
-		logger.blank();
-		logger.info(spacer);
-		logger.info(msg);
-		logger.info(spacer);
-		logger.blank();
-		
-		logger.info("<l>Initializing Modules.<r>");
-		logger.blank();
-		
-		moduleManager.constructAll();
-		
-		logger.blank();
-		logger.info("All <h>%s<r> enabled mechanics have been loaded.", moduleManager.getEnabledCount());
-		
-		logger.blank();
-		
-		logger.info("<l>Loading Configuration.<r>");
-
 		config = new MainConfig();
 		
-		logger.blank();
-		logger.info("Successfully Loaded Configuration.");
+		PluginContainer plugin = getPluginContainer();
 		
-		logger.blank();
-		logger.info("<l>Creating Injector.<r>");
+		if (isDevelopmentMode()){
+			String spacer = MyText.repeat("-", (" Launching <h>" + plugin.getName() + " v" + plugin.getVersion() + " ").length());
+			String msg = "<l> Launching " + plugin.getName() + " V" + plugin.getVersion() + " ";
+			
+			logger.blank();
+			logger.info(spacer);
+			logger.info(msg);
+			logger.info(spacer);
+			logger.blank();
+		}
+		
+		moduleManager.constructAll();
 		
 		Collection<Module> modules = moduleManager.getGuiceModules();
 		
 		injector = baseInjector.createChildInjector(modules);
-		
-//		logger.blank();
-//		injector.getAllBindings().forEach((key, value) -> {
-//			logger.info("<h>%s<r>: %s", key, value);
-//		});
-		logger.blank();
-		
-		logger.info("Injector Created.");
-		
+				
 		moduleManager.forEach((c)->{
 			Object obj = c.get();
 			if (obj == null) return;
 			injector.injectMembers(obj);
 		});
-		
-		logger.info("Module Injection Complete.");
-		
+				
 		moduleManager.onEnableAll();
 		
-		logger.blank();
-		logger.info("<l>Server loaded in <h>%s<l> mode.<r>", config.server.mode.toString());
-		logger.blank();
-	}
-	
-	@Listener
-	public void onServerStarted(GameStartedServerEvent event){
-		serverMode = config.server.mode;
-	}
-	
-	@Listener
-	public void onServerStopping(GameStoppingServerEvent event){
-		serverMode = ServerMode.STOPPING;
+		if (isDevelopmentMode()){
+			logger.blank();
+			logger.info("All <h>%s<r> enabled mechanics have been loaded.", moduleManager.getEnabledCount());
+			logger.blank();
+		} else {
+			logger.info("Launched " + plugin.getName() + " v" + plugin.getVersion() + " with " + moduleManager.getEnabledCount() + " modules.");
+		}
+		
 	}
 	
 	@Listener
@@ -135,5 +101,9 @@ public class TerraPlugin {
 	
 	public static PluginContainer getPluginContainer(){
 		return instance.pluginManager.fromInstance(instance).get();
+	}
+	
+	public static boolean isDevelopmentMode(){
+		return instance.config.devMode;
 	}
 }
