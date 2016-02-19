@@ -23,12 +23,12 @@ import uk.co.terragaming.TerraCore.CorePlugin;
 import uk.co.terragaming.TerraCore.Util.Logger.TerraLogger;
 
 
-public abstract class ConfigBase {
+public abstract class Config {
 	
 	private File file;
 	private CommentedConfigurationNode config;
 	
-	private ObjectMapper<ConfigBase>.BoundInstance configMapper;
+	private ObjectMapper<Config>.BoundInstance configMapper;
 	private ConfigurationLoader<CommentedConfigurationNode> loader;
 	
 	private TerraLogger logger = CorePlugin.instance.logger;
@@ -41,7 +41,7 @@ public abstract class ConfigBase {
 		}
 	}
 	
-	public ConfigBase(String folder, String configName){
+	public Config(String folder, String configName){
 		injectConfig();
 		folder = "config/" + CorePlugin.getPluginContainer().getName().toLowerCase() + "/" + folder + "/";
 		 
@@ -58,7 +58,7 @@ public abstract class ConfigBase {
 		save();
 	}
 	
-	public ConfigBase(String configName){
+	public Config(String configName){
 		injectConfig();
 		String folder = "config/" + CorePlugin.getPluginContainer().getName().toLowerCase() + "/";
 		 
@@ -75,7 +75,7 @@ public abstract class ConfigBase {
 		save();
 	}
 	
-	public ConfigBase(){
+	public Config(){
 		injectConfig();
 		String folder = "config/" + CorePlugin.getPluginContainer().getName().toLowerCase() + "/";
 		 
@@ -158,7 +158,7 @@ public abstract class ConfigBase {
     }
 	
 	@ConfigSerializable
-	public static class WorldLocation extends ConfigBase.Category{
+	public static class WorldLocation extends Config.Category{
 		
 		@Inject
 		Server server;

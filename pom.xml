@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>uk.co.terragaming</groupId>
 	<artifactId>terracore</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.2</version>
 	<name>TerraCore</name>
 	<description>Sponge Plugin Core Library</description>
 	<properties>
@@ -111,7 +111,7 @@
 		      <configuration>
 		        <doCheck>true</doCheck>
 		        <doUpdate>false</doUpdate>
-		        <format>${version}.{0,number}</format>
+		        <format>${project.version}.{0,number}</format>
 		        <items>
 		          <item>buildNumber0</item>
 		        </items>

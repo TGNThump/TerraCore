@@ -2,7 +2,7 @@ package uk.co.terragaming.TerraCore.Config;
 
 import ninja.leaping.configurate.objectmapping.Setting;
 
-public class MainConfig extends ConfigBase{
+public class MainConfig extends Config{
 	
 	public MainConfig() {
 		super("config.conf");
