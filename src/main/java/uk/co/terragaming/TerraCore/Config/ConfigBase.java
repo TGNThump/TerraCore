@@ -25,6 +25,7 @@ public abstract class ConfigBase {
 	private TerraLogger logger = TerraPlugin.instance.logger;
 	
 	public ConfigBase(String folder, String configName){
+		TerraPlugin.instance.injector.injectMembers(this);
 		folder = "config/" + TerraPlugin.getPluginContainer().getName().toLowerCase() + "/" + folder + "/";
 		 
 		if (!new File(folder).isDirectory()){
@@ -41,6 +42,7 @@ public abstract class ConfigBase {
 	}
 	
 	public ConfigBase(String configName){
+		TerraPlugin.instance.injector.injectMembers(this);
 		String folder = "config/" + TerraPlugin.getPluginContainer().getName().toLowerCase() + "/";
 		 
 		if (!new File(folder).isDirectory()){
@@ -57,6 +59,7 @@ public abstract class ConfigBase {
 	}
 	
 	public ConfigBase(){
+		TerraPlugin.instance.injector.injectMembers(this);
 		String folder = "config/" + TerraPlugin.getPluginContainer().getName().toLowerCase() + "/";
 		 
 		if (!new File(folder).isDirectory()){
@@ -122,6 +125,10 @@ public abstract class ConfigBase {
 	
 	@ConfigSerializable
 	protected static class Category {
+		
+		protected Category(){
+			TerraPlugin.instance.injector.injectMembers(this);
+		}
 		
     }
 	
