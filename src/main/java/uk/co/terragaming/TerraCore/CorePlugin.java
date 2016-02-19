@@ -61,7 +61,7 @@ public class CorePlugin {
 		
 		if (isDevelopmentMode()){
 			String spacer = MyText.repeat("-", (" Launching <h>" + plugin.getName() + " v" + plugin.getVersion() + " ").length());
-			String msg = "<l> Launching " + plugin.getName() + " V" + plugin.getVersion() + " ";
+			String msg = "<l> Launching " + plugin.getName() + " v" + plugin.getVersion() + " ";
 			
 			logger.blank();
 			logger.info(spacer);

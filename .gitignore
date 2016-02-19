@@ -4,3 +4,5 @@
 .settings
 .project
 /.apt_generated/
+
+buildNumber.properties
