@@ -313,6 +313,10 @@
 			<id>sponge-repo</id>
 			<url>http://repo.spongepowered.org/maven</url>
 		</repository>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
 	</repositories>
 	<reporting>
 		<plugins>
