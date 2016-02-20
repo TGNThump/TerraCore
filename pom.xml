@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>uk.co.terragaming</groupId>
 	<artifactId>terracore</artifactId>
-	<version>0.0.2</version>
+	<version>0.0.3</version>
 	<name>TerraCore</name>
 	<description>Sponge Plugin Core Library</description>
 	<properties>
@@ -38,6 +38,12 @@
 	<profiles>
 		<profile>
 			<id>release</id>
+			<activation>
+		      <property>
+		        <name>JITPACK</name>
+		        <value>true</value>
+		      </property>
+		    </activation>
 			<build>
 				<plugins>
 					<plugin>
