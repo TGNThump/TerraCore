@@ -37,7 +37,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
- * A {@link Method} wrapper that collects information about a command method.
+ * A {@link Method} wrapper that collects information about a {@link Command} method.
+ * @author Benjamin Pilgrim &lt;ben@pilgrim.me.uk&gt;
  */
 public class MethodCommand {
 	
@@ -401,6 +402,7 @@ public class MethodCommand {
 	
 	/**
 	 * Evaluates whether a flag is present matching a key.
+	 * @param key The flag name.
 	 * @return Whether the flag is present.
 	 */
 	public boolean hasFlag(String key){

@@ -2,7 +2,10 @@ package uk.co.terragaming.TerraCore.Commands.arguments;
 
 import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException;
 
-
+/**
+ * A {@link Character} {@link ArgumentParser}
+ * @author Benjamin Pilgrim &lt;ben@pilgrim.me.uk&gt;
+ */
 public class CharArgument implements ArgumentParser {
 
 	@Override

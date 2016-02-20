@@ -6,15 +6,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotates a {@link Command} with a Description.
+ * Annotates a {@link Command} or Parameter with a description.
+ * @author Benjamin Pilgrim &lt;ben@pilgrim.me.uk&gt;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.PARAMETER})
 public @interface Desc {
+		
 	/**
-     * A short description of the command.
-     *
-     * @return A short description for the command.
+     * A description of the command or parameter.
+     * @return A description of the command or parameter.
      */
 	String value();
 }

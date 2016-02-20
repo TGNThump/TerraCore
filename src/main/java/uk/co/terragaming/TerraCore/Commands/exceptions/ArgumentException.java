@@ -18,7 +18,6 @@ public class ArgumentException extends CommandException{
 	
 	private ArgumentException another;
 	
-	
 	/**
 	 * An exception that represents a wrong argument in a command  
 	 * @param message The decorated description of this Exception

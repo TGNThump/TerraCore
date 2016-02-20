@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>uk.co.terragaming</groupId>
 	<artifactId>terracore</artifactId>
-	<version>0.0.3</version>
+	<version>0.0.1</version>
 	<name>TerraCore</name>
 	<description>Sponge Plugin Core Library</description>
 	<properties>
@@ -37,13 +37,46 @@
 	</prerequisites>
 	<profiles>
 		<profile>
-			<id>release</id>
+			<id>build</id>
 			<activation>
 		      <property>
 		        <name>JITPACK</name>
 		        <value>true</value>
 		      </property>
 		    </activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>2.4</version>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>2.10.3</version>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>release</id>
 			<build>
 				<plugins>
 					<plugin>

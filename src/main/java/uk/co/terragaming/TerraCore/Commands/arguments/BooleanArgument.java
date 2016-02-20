@@ -6,6 +6,10 @@ import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException;
 
 import com.google.common.collect.Lists;
 
+/**
+ * A {@link Boolean} {@link ArgumentParser}
+ * @author Benjamin Pilgrim &lt;ben@pilgrim.me.uk&gt;
+ */
 public class BooleanArgument implements ArgumentParser {
 
 	private final static List<String> TRUE_OPTIONS = Lists.newArrayList("y", "yes", "on", "true", "1", "t");

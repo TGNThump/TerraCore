@@ -12,7 +12,10 @@ import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException;
 
 import com.google.common.collect.Lists;
 
-
+/**
+ * A {@link CatalogType} {@link ArgumentParser}
+ * @author Benjamin Pilgrim &lt;ben@pilgrim.me.uk&gt;
+ */
 public class CatalogArgument implements ArgumentParser {
 	
 	@Override
