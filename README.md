@@ -1,6 +1,5 @@
-## TerraCore
-[![Master](https://img.shields.io/badge/branch-master-orange.svg)](https://github.com/TerraGamingNetwork/TerraCore/tree/master) [![Build Status](https://img.shields.io/travis/TerraGamingNetwork/TerraCore/master.svg)](https://travis-ci.org/TerraGamingNetwork/TerraCore/branches) [![Code Quality](https://img.shields.io/codacy/0b0313978f0f4838818430ecfc14f595/master.svg)](https://www.codacy.com/app/groovyben008/TerraCore) [![GitHub tags](https://img.shields.io/github/tag/TerraGamingNetwork/TerraCore.svg)](https://github.com/TerraGamingNetwork/TerraCore/tags)
-<br />
+# TerraCore
+[![Master](https://img.shields.io/badge/branch-master-orange.svg)](https://github.com/TerraGamingNetwork/TerraCore/tree/master) [![Build Status](https://img.shields.io/travis/TerraGamingNetwork/TerraCore/master.svg)](https://travis-ci.org/TerraGamingNetwork/TerraCore/branches) [![Code Quality](https://img.shields.io/codacy/0b0313978f0f4838818430ecfc14f595/master.svg)](https://www.codacy.com/app/groovyben008/TerraCore) [![GitHub tags](https://img.shields.io/github/tag/TerraGamingNetwork/TerraCore.svg)](https://github.com/TerraGamingNetwork/TerraCore/tags)<br />
 [![Develop](https://img.shields.io/badge/branch-develop-orange.svg)](https://github.com/TerraGamingNetwork/TerraCore/tree/develop) [![Build Status](https://img.shields.io/travis/TerraGamingNetwork/TerraCore/develop.svg)](https://travis-ci.org/TerraGamingNetwork/TerraCore/branches) [![Code Quality](https://img.shields.io/codacy/0b0313978f0f4838818430ecfc14f595/develop.svg)](https://www.codacy.com/app/groovyben008/TerraCore)
 
 
