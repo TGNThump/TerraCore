@@ -6,7 +6,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +38,8 @@ import uk.co.terragaming.TerraCore.Util.Text.MyText;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.google.inject.Injector;
 
@@ -55,7 +56,7 @@ public class CommandHandler implements MethodCommandService {
 	private final CorePlugin plugin;
 	
 	private List<Object> handlers = Lists.newArrayList();
-	private HashMap<String, MethodCommand> commands;
+	private SetMultimap<String, MethodCommand> commands;
 	private Set<String> rootLabels;
 	
 	private List<ArgumentParser> argumentParsers;
@@ -64,14 +65,14 @@ public class CommandHandler implements MethodCommandService {
 		checkNotNull(plugin);
 		this.plugin = plugin;
 		
-		commands = Maps.newHashMap();
+		commands = MultimapBuilder.hashKeys().hashSetValues().build();
 		rootLabels = new HashSet<String>();
 		
 		argumentParsers = Lists.newArrayList();
 	}
 	
 	public MethodCommand getCommand(String path){
-		return commands.get(path);
+		return (MethodCommand) commands.get(path).toArray()[0];
 	}
 	
 	public boolean hasCommand(String parentPath) {
@@ -156,23 +157,26 @@ public class CommandHandler implements MethodCommandService {
 		
 		// try to execute the exact matches
 		for (String label : getExactMatches(command)){
-			MethodCommand mc = commands.get(label);
-			try{
-				return mc.execute(source, command.substring(label.length()).trim());
-			} catch (ArgumentException ex){
-				exceptions.add(ex);
-			} catch (NumberFormatException ex){}
+			for (MethodCommand mc : commands.get(label)){
+				try{
+					return mc.execute(source, command.substring(label.length()).trim());
+				} catch (ArgumentException ex){
+					exceptions.add(ex);
+				} catch (NumberFormatException ex){}
+			}
 		}
 		
 		// If no command could execute successfully:
 		Set<String> cmdSet = getPossibleMatches(command, true);
 		List<Text> usages = Lists.newArrayList();
-		Set<String[]> paths = Sets.newHashSet();
+		Set<MethodCommand> done = Sets.newHashSet();
+		
 		for (String label : cmdSet){
-			MethodCommand mc = commands.get(label);
-			if (paths.contains(mc.getPath())) continue;
-			paths.add(mc.getPath());
-			usages.add(mc.getUsage(source));
+			for (MethodCommand mc : commands.get(label)){
+				if (done.contains(mc)) continue;
+				done.add(mc);
+				usages.add(mc.getUsage(source));
+			}
 		}
 		
 		if (exceptions.isEmpty()){
@@ -296,27 +300,26 @@ public class CommandHandler implements MethodCommandService {
 		
 		if (!cmdSet.isEmpty()){
 			for (String label : cmdSet){
-				MethodCommand mc = commands.get(label);
-				
-				boolean p = false;
-				for (String perm : mc.getPerms()){
-					if (source.hasPermission(perm)) p = true;
-				}
-				if (!p) continue;
-				
-				if (command.startsWith(label + " ")){
-					suggestions.addAll(mc.getSuggestions(source, command.substring(label.length() + 1)));
-				} else if (label.startsWith(command)){
-					String[] sublabels = label.split(" ");
-					String[] words = command.split(" ");
+				for (MethodCommand mc : commands.get(label)){
+					boolean p = false;
+					for (String perm : mc.getPerms()){
+						if (source.hasPermission(perm)) p = true;
+					}
+					if (!p) continue;
 					
-					if (command.endsWith(" ")){
-						if (sublabels.length > words.length) suggestions.add(sublabels[words.length]);
-					} else {
-						if (sublabels.length > words.length - 1) suggestions.add(sublabels[words.length-1]);
+					if (command.startsWith(label + " ")){
+						suggestions.addAll(mc.getSuggestions(source, command.substring(label.length() + 1)));
+					} else if (label.startsWith(command)){
+						String[] sublabels = label.split(" ");
+						String[] words = command.split(" ");
+						
+						if (command.endsWith(" ")){
+							if (sublabels.length > words.length) suggestions.add(sublabels[words.length]);
+						} else {
+							if (sublabels.length > words.length - 1) suggestions.add(sublabels[words.length-1]);
+						}
 					}
 				}
-				
 			}
 		}
 		return suggestions;
@@ -329,17 +332,18 @@ public class CommandHandler implements MethodCommandService {
 		if (!cmdSet.isEmpty()){
 			boolean isFirst = true;
 			for (String label : cmdSet){
-				MethodCommand mc = commands.get(label);
-				if (mc == null) continue;
-				boolean p = false;
-				for (String perm : mc.getPerms()){
-					if (source.hasPermission(perm)) p = true;
+				for (MethodCommand mc : commands.get(label)){
+					if (mc == null) continue;
+					boolean p = false;
+					for (String perm : mc.getPerms()){
+						if (source.hasPermission(perm)) p = true;
+					}
+					if (!p) continue;
+					
+					if (isFirst) isFirst = false;
+					else usage.append(Text.of(TextColors.GRAY, " or "));
+					usage.append(Text.of(TextColors.WHITE, mc.getUsage(source)));
 				}
-				if (!p) continue;
-				
-				if (isFirst) isFirst = false;
-				else usage.append(Text.of(TextColors.GRAY, " or "));
-				usage.append(Text.of(TextColors.WHITE, mc.getUsage(source)));
 			}
 		}
 		
@@ -351,11 +355,12 @@ public class CommandHandler implements MethodCommandService {
 		
 		if (!cmdSet.isEmpty()){
 			for (String label : cmdSet){
-				MethodCommand mc = commands.get(label);
-				if (mc == null || mc.equals(null)) continue;
-				if (mc.getPerms() == null) continue;
-				for (String perm : mc.getPerms()){
-					if (source.hasPermission(perm)) return true;
+				for (MethodCommand mc : commands.get(label)){
+					if (mc == null || mc.equals(null)) continue;
+					if (mc.getPerms() == null) continue;
+					for (String perm : mc.getPerms()){
+						if (source.hasPermission(perm)) return true;
+					}
 				}
 			}
 		}
