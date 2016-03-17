@@ -1,7 +1,5 @@
 package uk.co.terragaming.TerraCore;
 
-import java.util.Collection;
-
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -18,31 +16,31 @@ import uk.co.terragaming.TerraCore.Util.Logger.TerraLogger;
 import uk.co.terragaming.TerraCore.Util.Text.MyText;
 
 import com.google.inject.Injector;
-import com.google.inject.Module;
 
 @Plugin(id = "TC", name = PomData.NAME, version = PomData.VERSION)
 public class CorePlugin {
 	
-	public static CorePlugin instance;
-	public ModuleManager moduleManager;
-	public Logger baseLogger;
-	public TerraLogger logger;
-	public Injector baseInjector;
-	public Injector injector;
+	public static String ID;
+	public static String NAME;
+	public static String VERSION;
 	
-	public MainConfig config;
+	private static CorePlugin instance;
 	
-	@Inject
-	private PluginManager pluginManager;
-	
-	@Inject
-	public void setBaseInjector(Injector baseInjector){
-		this.baseInjector = baseInjector;
+	public static boolean isDevelopmentMode(){
+		return instance.config.devMode;
 	}
 	
-	@Inject
-	public void setLogger(Logger logger){
-		baseLogger = logger;
+	public ModuleManager moduleManager;
+	public TerraLogger logger;
+	public Injector injector;
+	public MainConfig config;
+	
+	private Injector baseInjector;
+	
+	private PluginContainer pluginContainer;
+	
+	public static CorePlugin instance(){
+		return instance;
 	}
 	
 	public CorePlugin(){
@@ -53,15 +51,12 @@ public class CorePlugin {
 	}
 	
 	@Listener
-	public void onPreInit(GamePreInitializationEvent event){		
-		logger = new TerraLogger();
+	public void onPreInit(GamePreInitializationEvent event){
 		config = new MainConfig();
 		
-		PluginContainer plugin = getPluginContainer();
-		
 		if (isDevelopmentMode()){
-			String spacer = MyText.repeat("-", (" Launching <h>" + plugin.getName() + " v" + plugin.getVersion() + " ").length());
-			String msg = "<l> Launching " + plugin.getName() + " v" + plugin.getVersion() + " ";
+			String msg = "<l> Launching " + NAME + " v" + VERSION + " ";
+			String spacer = MyText.repeat("-", (msg).length());
 			
 			logger.blank();
 			logger.info(spacer);
@@ -71,27 +66,16 @@ public class CorePlugin {
 		}
 		
 		moduleManager.constructAll();
-		
-		Collection<Module> modules = moduleManager.getGuiceModules();
-		
-		injector = baseInjector.createChildInjector(modules);
-				
-		moduleManager.forEach((c)->{
-			Object obj = c.get();
-			if (obj == null) return;
-			injector.injectMembers(obj);
-		});
-				
-		moduleManager.onEnableAll();
+		injector = moduleManager.createInjector(baseInjector);
+		moduleManager.onEnableAll();		
 		
 		if (isDevelopmentMode()){
 			logger.blank();
 			logger.info("All <h>%s<r> enabled mechanics have been loaded.", moduleManager.getEnabledCount());
 			logger.blank();
 		} else {
-			logger.info("Launched " + plugin.getName() + " v" + plugin.getVersion() + " with " + moduleManager.getEnabledCount() + " modules.");
-		}
-		
+			logger.info("Launched " + NAME + " v" + VERSION + " with " + moduleManager.getEnabledCount() + " modules.");
+		}	
 	}
 	
 	@Listener
@@ -99,11 +83,38 @@ public class CorePlugin {
 		config.save();
 	}
 	
-	public static PluginContainer getPluginContainer(){
-		return instance.pluginManager.fromInstance(instance).get();
+	@Inject
+	public void setLogger(Logger logger){
+		logger = new TerraLogger(logger);
 	}
 	
-	public static boolean isDevelopmentMode(){
-		return instance.config.devMode;
+	@Inject
+	public void setBaseInjector(Injector baseInjector){
+		this.baseInjector = baseInjector;
+	}
+	
+	@Inject
+	public void setPluginManager(PluginManager pluginManager){
+		pluginContainer = pluginManager.fromInstance(instance).get();
+		
+		ID = pluginContainer.getId();
+		NAME = pluginContainer.getName();
+		VERSION = pluginContainer.getVersion();
+	}
+	
+	public Injector getInjector(){
+		return injector;
+	}
+	
+	public Injector getBaseInjector(){
+		return baseInjector;
+	}
+	
+	public TerraLogger getLogger(){
+		return logger;
+	}
+	
+	public PluginContainer getPluginContainer(){
+		return pluginContainer;
 	}
 }

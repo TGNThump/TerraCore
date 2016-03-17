@@ -12,6 +12,7 @@ import java.util.Set;
 import org.reflections.Reflections;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
 @Singleton
@@ -102,6 +103,23 @@ public class ModuleManager implements Iterable<ModuleContainer>{
 	@Override
 	public Iterator<ModuleContainer> iterator() {
 		return modules.values().iterator();
+	}
+
+	/**
+	 * Creates a guice child injector.
+	 * @param baseInjector
+	 * @return 
+	 */
+	public Injector createInjector(Injector baseInjector) {
+		Injector injector = baseInjector.createChildInjector(getGuiceModules());
+		
+		forEach((c)->{
+			Object obj = c.get();
+			if (obj == null) return;
+			injector.injectMembers(obj);
+		});
+		
+		return injector;
 	}
 	
 }

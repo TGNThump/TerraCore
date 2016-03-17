@@ -31,19 +31,19 @@ public abstract class Config {
 	private ObjectMapper<Config>.BoundInstance configMapper;
 	private ConfigurationLoader<CommentedConfigurationNode> loader;
 	
-	private TerraLogger logger = CorePlugin.instance.logger;
+	private TerraLogger logger = CorePlugin.instance().getLogger();
 	
 	private void injectConfig(){
-		if (CorePlugin.instance.injector == null){
-			CorePlugin.instance.baseInjector.injectMembers(this);
+		if (CorePlugin.instance().getInjector() == null){
+			CorePlugin.instance().getBaseInjector().injectMembers(this);
 		} else {
-			CorePlugin.instance.injector.injectMembers(this);
+			CorePlugin.instance().getInjector().injectMembers(this);
 		}
 	}
 	
 	public Config(String folder, String configName){
 		injectConfig();
-		folder = "config/" + CorePlugin.getPluginContainer().getName().toLowerCase() + "/" + folder + "/";
+		folder = "config/" + CorePlugin.NAME.toLowerCase() + "/" + folder + "/";
 		 
 		if (!new File(folder).isDirectory()){
 			new File(folder).mkdirs();
@@ -60,7 +60,7 @@ public abstract class Config {
 	
 	public Config(String configName){
 		injectConfig();
-		String folder = "config/" + CorePlugin.getPluginContainer().getName().toLowerCase() + "/";
+		String folder = "config/" + CorePlugin.NAME.toLowerCase() + "/";
 		 
 		if (!new File(folder).isDirectory()){
 			new File(folder).mkdirs();
@@ -77,7 +77,7 @@ public abstract class Config {
 	
 	public Config(){
 		injectConfig();
-		String folder = "config/" + CorePlugin.getPluginContainer().getName().toLowerCase() + "/";
+		String folder = "config/" + CorePlugin.NAME.toLowerCase() + "/";
 		 
 		if (!new File(folder).isDirectory()){
 			new File(folder).mkdirs();
@@ -144,10 +144,10 @@ public abstract class Config {
 	protected static class Category {
 		
 		private void injectConfig(){
-			if (CorePlugin.instance.injector == null){
-				CorePlugin.instance.baseInjector.injectMembers(this);
+			if (CorePlugin.instance().getInjector() == null){
+				CorePlugin.instance().getBaseInjector().injectMembers(this);
 			} else {
-				CorePlugin.instance.injector.injectMembers(this);
+				CorePlugin.instance().injector.injectMembers(this);
 			}
 		}
 		

@@ -31,9 +31,9 @@ public class ModuleContainer {
 		try {
 			module = mClass.newInstance();
 			if (CorePlugin.isDevelopmentMode()){
-				CorePlugin.instance.logger.info(MyText.repeat("   ", getDepth()) + "<h>"  + getName() + "<r> Initialized.");
+				CorePlugin.instance().logger.info(MyText.repeat("   ", getDepth()) + "<h>"  + getName() + "<r> Initialized.");
 			}
-			Sponge.getEventManager().registerListeners(CorePlugin.instance, module);
+			Sponge.getEventManager().registerListeners(CorePlugin.instance(), module);
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 			enabled = false;

@@ -3,7 +3,6 @@ package uk.co.terragaming.TerraCore.Util.Logger;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 
-import uk.co.terragaming.TerraCore.CorePlugin;
 import uk.co.terragaming.TerraCore.Util.Text.MyText;
 
 public class TerraLogger implements org.slf4j.Logger {	
@@ -15,11 +14,7 @@ public class TerraLogger implements org.slf4j.Logger {
 	private final String trace = "";
 	private final String reset = "<r>";
 	
-	Logger base = CorePlugin.instance.baseLogger;
-	
-	public TerraLogger(){
-		
-	}
+	private final Logger base;
 	
 	public TerraLogger(Logger base){
 		this.base = base;
