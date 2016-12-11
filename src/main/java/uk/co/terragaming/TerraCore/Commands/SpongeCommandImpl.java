@@ -8,6 +8,8 @@ import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 import com.google.common.collect.Lists;
 
@@ -27,7 +29,7 @@ public class SpongeCommandImpl implements CommandCallable{
 	}
 
 	@Override
-	public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
+	public List<String> getSuggestions(CommandSource source, String arguments, Location<World> location) throws CommandException {
 		List<String> suggestions = Lists.newArrayList();
 		suggestions.addAll(commandHandler.getCommandSuggestions(source, label + " " + arguments));
 		return suggestions;
@@ -39,12 +41,12 @@ public class SpongeCommandImpl implements CommandCallable{
 	}
 
 	@Override
-	public Optional<? extends Text> getShortDescription(CommandSource source) {
+	public Optional<Text> getShortDescription(CommandSource source) {
 		return Optional.empty();
 	}
 
 	@Override
-	public Optional<? extends Text> getHelp(CommandSource source) {
+	public Optional<Text> getHelp(CommandSource source) {
 		return Optional.empty();
 	}
 
@@ -52,6 +54,5 @@ public class SpongeCommandImpl implements CommandCallable{
 	public Text getUsage(CommandSource source) {
 		return commandHandler.getCommandUsage(source, label);
 	}
-
 	
 }

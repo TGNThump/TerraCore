@@ -111,15 +111,15 @@ public class ModuleManager implements Iterable<ModuleContainer>{
 	 * @return 
 	 */
 	public Injector createInjector(Injector baseInjector) {
-		Injector injector = baseInjector.createChildInjector(getGuiceModules());
-		
+		return baseInjector.createChildInjector(getGuiceModules());
+	}
+	
+	public void injectGuiceModules(Injector injector){
 		forEach((c)->{
 			Object obj = c.get();
 			if (obj == null) return;
 			injector.injectMembers(obj);
 		});
-		
-		return injector;
 	}
 	
 }

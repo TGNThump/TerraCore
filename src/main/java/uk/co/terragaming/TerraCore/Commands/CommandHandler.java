@@ -25,16 +25,6 @@ import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
-import uk.co.terragaming.TerraCore.CorePlugin;
-import uk.co.terragaming.TerraCore.Commands.annotations.Command;
-import uk.co.terragaming.TerraCore.Commands.arguments.ArgumentParser;
-import uk.co.terragaming.TerraCore.Commands.arguments.ObjectArgument;
-import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException;
-import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException.NotEnoughArgumentsException;
-import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException.TooManyArgumentsException;
-import uk.co.terragaming.TerraCore.Config.MainConfig;
-import uk.co.terragaming.TerraCore.Util.Text.MyText;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -43,13 +33,19 @@ import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.google.inject.Injector;
 
+import uk.co.terragaming.TerraCore.CorePlugin;
+import uk.co.terragaming.TerraCore.Commands.annotations.Command;
+import uk.co.terragaming.TerraCore.Commands.arguments.ArgumentParser;
+import uk.co.terragaming.TerraCore.Commands.arguments.ObjectArgument;
+import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException;
+import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException.NotEnoughArgumentsException;
+import uk.co.terragaming.TerraCore.Commands.exceptions.ArgumentException.TooManyArgumentsException;
+import uk.co.terragaming.TerraCore.Util.Text.MyText;
+
 public class CommandHandler implements MethodCommandService {
 	
 	@Inject
 	Injector injector;
-	
-	@Inject
-	MainConfig config;
 	
 	private static final ObjectArgument DEFAULT_ARG_PARSER = new ObjectArgument();
 	

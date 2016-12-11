@@ -23,7 +23,7 @@ public class WorldTimeArgument implements ArgumentParser{
 		if (arg.equalsIgnoreCase("dusk")) return (T) WorldTime.DUSK;
 		if (arg.equalsIgnoreCase("midnight")) return (T) WorldTime.MIDNIGHT;
 		if (arg.equalsIgnoreCase("night")) return (T) WorldTime.NIGHT;
-		if (arg.equalsIgnoreCase("nood")) return (T) WorldTime.NOON;
+		if (arg.equalsIgnoreCase("noon")) return (T) WorldTime.NOON;
 		
 		if (arg.endsWith("am")){
 			arg = arg.substring(0, arg.length()-2);

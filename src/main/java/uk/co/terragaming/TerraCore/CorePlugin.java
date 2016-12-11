@@ -17,7 +17,7 @@ import uk.co.terragaming.TerraCore.Util.Text.MyText;
 
 import com.google.inject.Injector;
 
-@Plugin(id = "TC", name = PomData.NAME, version = PomData.VERSION)
+@Plugin(id = "tc", name = PomData.NAME, version = PomData.VERSION)
 public class CorePlugin {
 	
 	public static String ID;
@@ -37,6 +37,8 @@ public class CorePlugin {
 	
 	private Injector baseInjector;
 	
+	@Inject
+	private PluginManager pluginManager;
 	private PluginContainer pluginContainer;
 	
 	public static CorePlugin instance(){
@@ -52,6 +54,7 @@ public class CorePlugin {
 	
 	@Listener
 	public void onPreInit(GamePreInitializationEvent event){
+		setPluginManager(pluginManager);
 		config = new MainConfig();
 		
 		if (isDevelopmentMode()){
@@ -67,6 +70,7 @@ public class CorePlugin {
 		
 		moduleManager.constructAll();
 		injector = moduleManager.createInjector(baseInjector);
+		moduleManager.injectGuiceModules(injector);
 		moduleManager.onEnableAll();		
 		
 		if (isDevelopmentMode()){
@@ -85,7 +89,7 @@ public class CorePlugin {
 	
 	@Inject
 	public void setLogger(Logger logger){
-		logger = new TerraLogger(logger);
+		this.logger = new TerraLogger(logger);
 	}
 	
 	@Inject
@@ -93,13 +97,13 @@ public class CorePlugin {
 		this.baseInjector = baseInjector;
 	}
 	
-	@Inject
+	//@Inject
 	public void setPluginManager(PluginManager pluginManager){
 		pluginContainer = pluginManager.fromInstance(instance).get();
 		
 		ID = pluginContainer.getId();
 		NAME = pluginContainer.getName();
-		VERSION = pluginContainer.getVersion();
+		VERSION = pluginContainer.getVersion().orElse("");
 	}
 	
 	public Injector getInjector(){

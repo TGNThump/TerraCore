@@ -2,6 +2,9 @@ package uk.co.terragaming.TerraCore.Commands;
 
 import org.spongepowered.api.Sponge;
 
+import com.google.inject.Inject;
+import com.google.inject.Provides;
+
 import uk.co.terragaming.TerraCore.CorePlugin;
 import uk.co.terragaming.TerraCore.TerraCore;
 import uk.co.terragaming.TerraCore.Commands.arguments.BooleanArgument;
@@ -20,9 +23,6 @@ import uk.co.terragaming.TerraCore.Commands.arguments.WorldPropertiesArgument;
 import uk.co.terragaming.TerraCore.Commands.arguments.WorldTimeArgument;
 import uk.co.terragaming.TerraCore.Foundation.GuiceModule;
 import uk.co.terragaming.TerraCore.Foundation.Module;
-
-import com.google.inject.Inject;
-import com.google.inject.Provides;
 
 @Module(name="CommandModule", parent = TerraCore.class)
 public class CommandModule extends GuiceModule{
